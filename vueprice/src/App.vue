@@ -9,7 +9,7 @@ import Price from '@/views/Price.vue'
 export default {
    name:"price",
    components:{
-     Price
+     Price:Price
    }
 }
 </script>

@@ -27,12 +27,7 @@
             type="primary"
             @click="openUpdateDialog(scope.row)"
           >编辑</el-link>
-          <el-link
-            class="font-12"
-            size="mini"
-            type="danger"
-            @click="deletePrice(scope.row)"
-          >删除</el-link>
+          <el-link class="font-12" size="mini" type="danger" @click="deletePrice(scope.row)">删除</el-link>
         </template>
       </el-table-column>
     </el-table>
@@ -40,9 +35,9 @@
       <el-button type="primary" class="mt15 wper100" @click="openAddDialog">添加</el-button>
     </div>
     <el-dialog :title="title+'油价信息'" :visible="isVisible" width="80%" :show-close="false">
-      <el-form :model="form" :inline="true"  :rules="rules" ref="form">
+      <el-form :model="form" :inline="true" :rules="rules" ref="form">
         <el-form-item label="供应商:" prop="supplier">
-          <el-input v-model="form.supplier"  type="text" autocomplete="off" placeholder="请输入供应商"></el-input>
+          <el-input v-model="form.supplier" type="text" autocomplete="off" placeholder="请输入供应商"></el-input>
         </el-form-item>
         <el-form-item label="品名:" prop="name">
           <el-input v-model="form.name" type="text" autocomplete="off" placeholder="请输入品名"></el-input>
@@ -57,7 +52,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="涨跌:" prop="trend">
-          <el-select v-model="form.trend" placeholder="请选择幅度" >
+          <el-select v-model="form.trend" placeholder="请选择幅度">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -67,78 +62,83 @@
           </el-select>
         </el-form-item>
         <el-form-item label="密度:" prop="density">
-          <el-input v-model.number="form.density"   placeholder="请输入密度" type="number" min="0" autocomplete="off"></el-input>
+          <el-input
+            v-model.number="form.density"
+            placeholder="请输入密度"
+            type="number"
+            min="0"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="controlPrice">{{title}}</el-button>
-        <el-button  @click="toggleDialog">关闭</el-button>
+        <el-button @click="toggleDialog">关闭</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
 import FetchData from "@/axios/index";
-import {deep }from "@/assets/js/util";
+import { deep } from "@/assets/js/util";
 export default {
   data() {
-     var validateMoney = (rule, value, callback) => {
-       let money=/^\d+(\.\d{1,2})?$/;
-        if (!money.test(value)) {
-          callback(new Error('输入正确的金额'));
-        } else {
-          callback();
-        }
-      };
-      var validateFloat = (rule, value, callback) => {
-       let density=/^(\d*)(\.\d*)?|0$/;
-        if (!density.test(value)) {
-          callback(new Error('输入正确的密度'));
-        } else {
-          callback();
-        }
-      };
+    var validateMoney = (rule, value, callback) => {
+      let money = /^\d+(\.\d{1,2})?$/;
+      if (!money.test(value)) {
+        callback(new Error("输入正确的金额"));
+      } else {
+        callback();
+      }
+    };
+    var validateFloat = (rule, value, callback) => {
+      let density = /^(\d*)(\.\d*)?|0$/;
+      if (!density.test(value)) {
+        callback(new Error("输入正确的密度"));
+      } else {
+        callback();
+      }
+    };
     return {
       isVisible: false,
-      title:'添加',
-      options: [{
-          value: '涨',
-          label: '涨'
-        }, {
-          value: '跌',
-          label: '跌'
-        }, {
-          value: '平',
-          label: '平'
-        }],
+      title: "添加",
+      options: [
+        {
+          value: "涨",
+          label: "涨"
+        },
+        {
+          value: "跌",
+          label: "跌"
+        },
+        {
+          value: "平",
+          label: "平"
+        }
+      ],
       form: {
         supplier: "",
         name: "",
         price: "",
         trend: "",
         density: "",
-        id:""
+        id: ""
       },
       rules: {
-         supplier: [
-            { required: true, message: '请输入供应商', trigger: 'change' },
-          ],
-          name: [
-            { required: true, message: '请输入品名', trigger: 'change' },
-          ],
-          trend: [
-            { required: true, message: '请选择幅度', trigger: 'change' }
-          ],
-          price: [
-            { required: true, message: '请输入价格', trigger: 'change' },
-            { validator: validateMoney, trigger: 'change' }
-          ],
-          density: [
-            { required: true, message: '请输入密度', trigger: 'change' },
-            { validator: validateFloat, trigger: 'change' }
-          ],
-          
-        },
+        supplier: [
+          { required: true, message: "请输入供应商", trigger: "change" }
+        ],
+        name: [{ required: true, message: "请输入品名", trigger: "change" }],
+        trend: [{ required: true, message: "请选择幅度", trigger: "change" }],
+        price: [
+          { required: true, message: "请输入价格", trigger: "change" },
+          { validator: validateMoney, trigger: "change" }
+        ],
+        density: [
+          { required: true, message: "请输入密度", trigger: "change" },
+          { validator: validateFloat, trigger: "change" }
+        ]
+      },
       mergeSpanArr: [], // 空数组，记录每一行的合并数
       mergeSpanArrIndex: "", // mergeSpanArr的索引
       oddSupplierArr: [],
@@ -147,92 +147,94 @@ export default {
     };
   },
   mounted() {
-   this.queryPrice();
+    this.queryPrice();
   },
   methods: {
-
     queryPrice() {
       FetchData.request("price/queryPrice").then(data => {
-      data = data.data;
-      if (data.code == "200") {
-        this.tableData = data.data;
-        this.setMergeArr(this.tableData);
-        this.getSupplier(this.tableData);
-      } else {
-        this.$message.error("查询数据失败");
-      }
-    });
-    },
-    controlPrice(){
-      let url = "";
-      if(this.title == "添加") {
-        url = "addPrice"
-      }else if (this.title == "修改") {
-        url = "updatePrice"
-      }
-      this.$refs["form"].validate((valid) => {
-         if (valid) {
-            this.requestPrice(url,this.title);
-          } else {
-            return false;
-          }
-      })
-       
-    },
-    requestPrice(url,title){
-      FetchData.request(`price/${url}`,this.form).then(data => {
         data = data.data;
-        console.log(data)
         if (data.code == "200") {
-            this.$message({
-            message: `${title}数据成功`,
-            type: 'success'
-          });
-            this.queryPrice();
-            this.isVisible = false;
-          } else {
-            this.$message.error(`${title}数据失败`);
-          }
+          this.tableData = data.data;
+          this.setMergeArr(this.tableData);
+          this.getSupplier(this.tableData);
+        } else {
+          this.$message.error("查询数据失败");
+        }
       });
     },
-    openAddDialog(){
-       this.isVisible = !this.isVisible;
-       this.form = {
+    controlPrice() {
+      let url = "";
+      if (this.title == "添加") {
+        url = "addPrice";
+      } else if (this.title == "修改") {
+        url = "updatePrice";
+      }
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          this.requestPrice(url, this.title);
+        } else {
+          return false;
+        }
+      });
+    },
+    requestPrice(url, title) {
+      FetchData.request(`price/${url}`, this.form).then(data => {
+        data = data.data;
+        console.log(data);
+        if (data.code == "200") {
+          this.$message({
+            message: `${title}数据成功`,
+            type: "success"
+          });
+          this.queryPrice();
+          this.isVisible = false;
+        } else {
+          this.$message.error(`${title}数据失败`);
+        }
+      });
+    },
+    openAddDialog() {
+      this.isVisible = !this.isVisible;
+      this.form = {
         supplier: "",
         name: "",
         price: "",
         trend: "",
         density: "",
-        id:""
+        id: ""
       };
       this.title = "添加";
-      this.$refs["form"].resetFields();
-    },
-    openUpdateDialog(row){
-       this.isVisible = !this.isVisible;
-       console.log(row)
-      let cloneRow = deep(row)
-       this.form = cloneRow;
-       this.title = "修改";
+      this.$nextTick(() => {
         this.$refs["form"].resetFields();
+      });
+    },
+    openUpdateDialog(row) {
+      this.isVisible = !this.isVisible;
+      console.log(row);
+      let cloneRow = deep(row);
+      this.title = "修改";
+      this.$nextTick(() => {
+        this.$refs["form"].resetFields();
+        this.form = cloneRow;
+      });
     },
 
     toggleDialog() {
       this.isVisible = !this.isVisible;
     },
     deletePrice(row) {
-        this.form.id = row.id;
-        this.$confirm('你确定要删除该条记录吗?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          showClose:false
-        }).then(() => {
-          this.requestPrice("deletePrice","删除");
-        }).catch(() => {
-                   
-        });
-      },
+      this.form.id = row.id;
+      this.$confirm("你确定要删除该条记录吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        showClose: false
+      })
+        .then(() => {
+          this.requestPrice("deletePrice", "删除");
+        })
+        .catch(() => {});
+    },
     getSupplier(data) {
       let supplier = data.reduce((supplierArr, item) => {
         if (!supplierArr.includes(item.supplier)) {
@@ -248,7 +250,7 @@ export default {
         }
       });
     },
-    changeCss({ row}) {
+    changeCss({ row }) {
       // 定义changeCss函数，这样当表格中的相应行满足自己设定的条件是就可以将该行css样式改变
 
       if (this.oddSupplierArr.includes(row.supplier)) {
@@ -267,7 +269,7 @@ export default {
         </span>
       );
     },
-    arraySpanMethod({rowIndex,columnIndex }) {
+    arraySpanMethod({ rowIndex, columnIndex }) {
       if (columnIndex === 0) {
         const _row = this.mergeSpanArr[rowIndex];
         const _col = _row > 0 ? 1 : 0;
@@ -326,7 +328,6 @@ export default {
     display: table-cell !important;
   }
 
-
   .el-table colgroup {
     display: table-cell !important;
   }
@@ -361,18 +362,17 @@ export default {
   .el-dialog__footer {
     text-align: center;
   }
- .el-button--primary {
+  .el-button--primary {
     width: auto !important;
-}
+  }
   .el-dialog__header {
     text-align: center;
   }
   .el-dialog__body {
     padding: 0 15px;
   }
- .wper100{
-      width:100% !important;
+  .wper100 {
+    width: 100% !important;
   }
-
 }
 </style>
