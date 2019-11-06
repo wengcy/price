@@ -1,9 +1,12 @@
-let express=require("express");
-let db = require('./config/db');
+
 let app= require('./routes/index');
+const compression = require('compression')
+app.use(compression())
+let express=require("express");
 const fs = require('fs');
 const path = require('path');
 let cors = require('cors');
+
 app.use(cors());
 app.use(express.static(path.resolve(__dirname, './dist')))
 app.get('/', function(req, res) {
