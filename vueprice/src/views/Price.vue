@@ -78,6 +78,7 @@
 </template>
 <script>
 import FetchData from '@/axios/index';
+import variables  from "@/assets/css/variables.scss";
 export default {
   data() {
     return {
@@ -158,9 +159,9 @@ export default {
     changeCss({ row}) {
       // 定义changeCss函数，这样当表格中的相应行满足自己设定的条件是就可以将该行css样式改变
       if (this.oddSupplierArr.includes(row.supplier)) {
-        return "background:#C3CDD6";
+        return "background:"+variables.trOddColor;;
       } else if (this.evenSupplierArr.includes(row.supplier)) {
-        return "background:#EAD0B3";
+        return "background:"+variables.trEvenColor;;
       }
     },
 
@@ -216,7 +217,7 @@ export default {
     }
   }
 .phone {
-  color: #FA7362;
+  color: $theme-one;
   font-size: 24px;
   margin-left: 10px;
 }

@@ -2,6 +2,27 @@
   "name": "vueprice",
   "version": "0.1.0",
   "private": true,
+  "postcss":{
+    "plugins":{
+      "autoprefixer":{},
+      "postcss-px-to-viewport":{
+        "unitToConvert": "px",
+        "viewportWidth": 375,
+        "unitPrecision": 5,
+        "propList": ["*"],
+        "viewportUnit": "vw",
+        "fontViewportUnit": "vw",
+        "selectorBlackList": ["el"],
+        "minPixelValue": 1,
+        "mediaQuery": false,
+        "replace": true,
+        "exclude": [],
+        "landscape": false,
+        "landscapeUnit": "vw",
+        "landscapeWidth": 667
+      }
+    }
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -28,6 +49,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.12.0",
+    "postcss-px-to-viewport": "^1.1.1",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",
     "sass-resources-loader": "^2.0.1",

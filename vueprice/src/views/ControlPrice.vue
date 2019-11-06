@@ -81,6 +81,7 @@
 <script>
 import FetchData from "@/axios/index";
 import { deep } from "@/assets/js/util";
+import variables  from "@/assets/css/variables.scss";
 export default {
   data() {
     var validateMoney = (rule, value, callback) => {
@@ -148,6 +149,7 @@ export default {
   },
   mounted() {
     this.queryPrice();
+    console.log(variables)
   },
   methods: {
     queryPrice() {
@@ -252,11 +254,10 @@ export default {
     },
     changeCss({ row }) {
       // 定义changeCss函数，这样当表格中的相应行满足自己设定的条件是就可以将该行css样式改变
-
       if (this.oddSupplierArr.includes(row.supplier)) {
-        return "background:#C3CDD6";
+        return "background:"+variables.trOddColor;
       } else if (this.evenSupplierArr.includes(row.supplier)) {
-        return "background:#EAD0B3";
+        return "background:"+variables.trEvenColor;
       }
     },
 
@@ -312,11 +313,6 @@ export default {
     p {
       margin: 0;
     }
-  }
-  .phone {
-    color: #fa7362;
-    font-size: 24px;
-    margin-left: 10px;
   }
   .cell {
     text-align: center;

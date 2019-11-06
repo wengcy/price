@@ -5,7 +5,6 @@ function resolve(dir) {
 }
 module.exports = {
   lintOnSave: false,
-  
   chainWebpack: (config) => {
     config.resolve.alias
       .set('@', resolve('src'));
@@ -16,8 +15,8 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        data: `
-          @import "@/variables.scss";
+        prependData: `
+          @import "@/assets/css/variables.scss";
         `
       }
     }
