@@ -180,7 +180,7 @@ export default {
       });
     },
     requestPrice(url, title) {
-      FetchData.request(`price/${url}`, this.form).then(data => {
+      FetchData.request(`price/${url}`, this.form, "post").then(data => {
         data = data.data;
         console.log(data);
         if (data.code == "200") {
