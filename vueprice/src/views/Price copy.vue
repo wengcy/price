@@ -1,25 +1,12 @@
 <template>
   <div id="wtable" style="width:100%">
-     <div class="header-wrapper m15">
-      <div v-html="headerInfo">
-      </div>
-    </div> 
-    <div class="tabs-wrap">
-        <div class="tabs-item" v-for="(item,index) in nameList" :key="item" @click="getListByName(index)"> 
-           <div class="mtabs">
-             <div class="tab-text" :class="currentTabIndex == index ? 'activeTab' :''">
-                {{item}}
-             </div>
-           </div>
-        </div>
-    </div>
-    
     <el-table
       :data="tableData"
       border
-      stripe
       size="small"
       style="width:100%"
+      :span-method="arraySpanMethod"
+      :row-style="changeCss"
       header-cell-class-name = "headerStyle "
     >
       <el-table-column prop="supplier" label="供应商"></el-table-column>
@@ -39,7 +26,7 @@
               :value="scope.row.freight"
               @blur="setZero(scope.row,'freight')"
               @focus="setEmpty(scope.row,'freight')"
-              @input="getEndPrice(scope.row)"
+              @input="getEndPrice(scope)"
               type="number"
               autocomplete="off"
               class="el-input__inner"
@@ -48,12 +35,12 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="endPrice" label="单位价,(元/升)"  :render-header="renderHeader">
+      <el-table-column prop="endPrice" label="单位价,(元/升)" :render-header="renderHeader">
+        <template
+          slot-scope="scope"
+        >{{(scope.row.price+scope.row.freight)/1000*scope.row.density | keepTwoNum}}</template>
       </el-table-column>
     </el-table>
-    <div class="tc">
-      <el-button type="warning"  class="mt15" @click="sortByEndPriceOnBtn()">按单位价{{orderTitle}}序排列</el-button>
-    </div>
     <div class="p15">
       <div class="gray mb15">注：请点击输入运费,计算单位价</div>
       <span class="mt15">
@@ -92,100 +79,36 @@
 <script>
 import FetchData from '@/axios/index';
 import variables  from "@/assets/css/variables.scss";
-import { deep } from "@/assets/js/util";
 export default {
   data() {
     return {
       isVisible:false,
-      orderTitle:"降",
       form:{
         price:0,
         density:0,
         freight:0,
         endPrice:0
       },
-      headerInfo:"",
-      tableData: [],
-      oldData:[],
-      nameList: [],
-      sortByEndPrice:[],
-      currentTabIndex:0,
+      mergeSpanArr: [], // 空数组，记录每一行的合并数
+      mergeSpanArrIndex: "", // mergeSpanArr的索引
+      oddSupplierArr: [],
+      evenSupplierArr: [],
+      tableData: []
     };
   },
   mounted() {
-    this.queryList();
-    this.queryMessage();
+    FetchData.request("price/queryPrice").then((data) => {
+      data = data.data;
+      if(data.code == "200") {
+        this.tableData = data.data;
+        this.setMergeArr(this.tableData);
+        this.getSupplier(this.tableData);
+      }else {
+        this.$message.error('查询数据失败');
+      }
+    })
   },
   methods: {
-    queryMessage() {
-       FetchData.request("message/queryMessage").then((data) => {
-        data = data.data;
-        if(data.code == "200") {
-          this.headerInfo = data.data[0].message;
-        }else {
-          this.$message.error('头信息查询失败');
-        }
-      })
-    },
-    queryList(){
-      FetchData.request("price/queryAllPriceOrderByEndPrice").then((data) => {
-        data = data.data;
-        if(data.code == "200") {
-          this.oldData = data.data;
-          console.log(this.oldData)
-          let nameArr = this.getNameList(data.data);
-          this.nameList =  nameArr.sort();
-          this.sortByEndPrice = new Array(this.nameList.length).fill("ASC");
-          this.getListByName(0);
-        }else {
-          this.$message.error('查询数据失败');
-        }
-      })
-    },
-    getNameList(data) {
-      let nameList = data.reduce((nameArr, item) => {
-        if (!nameArr.includes(item.name)) {
-          nameArr.push(item.name);
-        }
-        return nameArr;
-      }, []);
-      return nameList;
-    },
-    getListByName(index){
-      this.currentTabIndex = index;
-      this.fillterByName();
-    },
-    sortByEndPriceOnBtn(){//点击升序降序按钮，重新排列数据
-      let sortName = this.sortByEndPrice[this.currentTabIndex];
-      if(sortName === "ASC") {
-        this.orderTitle = "升",
-        this.sortByEndPrice[this.currentTabIndex] = "DESC";
-        this.tableData.sort((a,b)=>{ return b.endPrice-a.endPrice})
-      }else {
-        this.orderTitle = "降",
-         this.sortByEndPrice[this.currentTabIndex] = "ASC";
-         this.tableData.sort((a,b)=>{ return a.endPrice-b.endPrice})
-      }
-    },
-    sortByEndPriceOnName(){
-      let sortName = this.sortByEndPrice[this.currentTabIndex];
-      if(sortName === "ASC") {
-        this.orderTitle = "降",
-        this.tableData.sort((a,b)=>{ return a.endPrice-b.endPrice})
-      }else {
-        this.orderTitle = "升",
-        this.tableData.sort((a,b)=>{ return b.endPrice-a.endPrice})
-      }
-    },
-    fillterByName(){
-      let name = this.nameList[this.currentTabIndex];
-      let currentData = deep(this.oldData);
-      let list = currentData.filter((item) => {
-        return item.name == name;
-      })
-      this.tableData = list;
-      this.sortByEndPriceOnName();
-    },
     toggleDialog(){
       this.isVisible = !this.isVisible;
     },
@@ -200,26 +123,48 @@ export default {
         row[props] = 0;
       }
     },
-    getEndPrice(row) {
+    getEndPrice(scope) {
+      let index = scope.$index;
+      let rowNum = this.mergeSpanArr[index];
+      //截取数组长度[index-(index+rowNum)）
+      let endIndex = index+rowNum;
       let value = event.target.value;
       let intValue = value ? parseInt(event.target.value) : 0;
-      row.freight = intValue;
-      let endPrice = ((row.price + row.freight) / 1000) * row.density;
-      row.endPrice = Number(endPrice).toFixed(2);
-      this.setOldData(row.id, row.freight, row.endPrice)
-    },
-    setOldData(id,freight,endPrice){
-      this.oldData.forEach((item)=>{
-        if(item.id == id) {
-          item.freight = freight;
-          item.endPrice = endPrice;
+      this.tableData.forEach((item,i)=>{
+        if(i >= index  && i < endIndex) {
+          item.freight = intValue;
         }
       })
     },
-    getDialogEndPrice(row) {
+     getDialogEndPrice(row) {
       let endPrice = ((row.price + row.freight) / 1000) * row.density;
       row.endPrice = Number(endPrice).toFixed(2);
     },
+   
+    getSupplier(data) {
+      let supplier = data.reduce((supplierArr, item) => {
+        if (!supplierArr.includes(item.supplier)) {
+          supplierArr.push(item.supplier);
+        }
+        return supplierArr;
+      }, []);
+      supplier.forEach((element, index) => {
+        if (index % 2) {
+          this.oddSupplierArr.push(element);
+        } else {
+          this.evenSupplierArr.push(element);
+        }
+      });
+    },
+    changeCss({ row}) {
+      // 定义changeCss函数，这样当表格中的相应行满足自己设定的条件是就可以将该行css样式改变
+      if (this.oddSupplierArr.includes(row.supplier)) {
+        return "background:"+variables.trOddColor;;
+      } else if (this.evenSupplierArr.includes(row.supplier)) {
+        return "background:"+variables.trEvenColor;;
+      }
+    },
+
     renderHeader(h, { column }) {
       let labelArr = column.label.split(",");
       return (
@@ -228,6 +173,36 @@ export default {
           <p class="small-font">{labelArr[1]}</p>
         </span>
       );
+    },
+    arraySpanMethod({ rowIndex,columnIndex }) {
+      if (columnIndex === 0 || columnIndex === 4) {
+        const _row = this.mergeSpanArr[rowIndex];
+        const _col = _row > 0 ? 1 : 0;
+        return {
+          rowspan: _row,
+          colspan: _col
+        };
+      }
+    },
+    setMergeArr(data) {
+      for (var i = 0; i < data.length; i++) {
+        if (i === 0) {
+          this.mergeSpanArr.push(1);
+          this.mergeSpanArrIndex = 0;
+        } else {
+          // 判断当前元素与上一个元素是否相同
+          if (data[i].supplier === data[i - 1].supplier) {
+            this.mergeSpanArr[this.mergeSpanArrIndex] += 1;
+            this.mergeSpanArr.push(0);
+          } else {
+            this.mergeSpanArr.push(1);
+            this.mergeSpanArrIndex = i;
+          }
+        }
+      }
+      // 如果第一条记录索引为0，向数组中push 1，设置索引值
+      // 如果不是第一条记录，判断与前一条记录是否相等，相等则向mergeSpanArr添加元素0
+      // 且将前一条记录+1，即需要合并的行数+1，直到得到所有需要合并的行数
     }
   }
 };
@@ -236,52 +211,10 @@ export default {
 
 <style lang="scss" >
 #wtable {
-  .header-wrapper {
-    background-color: #e2f7ec;
-    padding: 10px;
-    >div {
-      border: 1px dashed #0c746b;
-      padding: 10px;
-    }
-  }
-  .tabs-wrap {
-    margin: 10px 0 0 0;
-    padding:0 7px;
-    overflow: hidden;
-    .tabs-item {
-          width: 33%;
-          float: left;
-          margin-bottom: 10px;
-         .mtabs {
-             padding:0 7px;
-           .tab-text {
-              height: 40px;
-              border:1px solid $theme-three;
-              border-radius:4px;
-              line-height: 40px;
-              text-align: center;
-              color: $theme-three;
-           }
-           .activeTab {
-                background-color: $theme-three;
-                color: white;
-           }
-        }
-    }
-   
-  }
-  
   .render_label {
     p {
       margin: 0;
     }
-  }
-  .el-table__row--striped td{
-    background-color: $theme-six !important;
-  }
-
-   .el-table__row td{
-    background-color: $theme-five;
   }
 .phone {
   color: $theme-one;
@@ -301,7 +234,9 @@ export default {
   .el-table colgroup {
     display: table-cell !important;
   }
-
+  .el-table--enable-row-hover .el-table__body tr:hover > td {
+    background-color: inherit !important;
+  }
   .el-table .cell,
   .el-table th div,
   .el-table--border td:first-child .cell,

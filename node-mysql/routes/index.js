@@ -1,6 +1,7 @@
 let user = require('./user')
 let meter = require('./meter')
 let price = require('./price')
+let message = require('./message')
 let express = require('express')
 let app = express();
 let bodyParser = require('body-parser');
@@ -16,4 +17,5 @@ app.use(function(req, res, next) {
 app.use("/user",user);
 app.use("/meter",meter);
 app.use("/price",price);
+app.use("/message",message);
 module.exports = app

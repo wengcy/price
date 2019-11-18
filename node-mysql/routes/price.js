@@ -5,6 +5,12 @@ let router = express.Router()
 router.get('/queryPrice', function (req,res){
 	price.queryAllPrice(req,res);
 });
+router.get('/queryMessage', function (req,res){
+	price.queryMessage(req,res);
+});
+router.get('/queryAllPriceOrderByEndPrice', function(req,res){
+    price.queryAllPriceOrderByEndPrice(req,res)
+})
 router.post('/addPrice', function (req,res){
 	price.addPrice(req,res);
 });

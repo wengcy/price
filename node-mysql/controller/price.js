@@ -6,8 +6,43 @@ logger.level = 'debug';
 
 let price = {
 	queryAllPrice: function(req,res) {
-		console.log()
 		let sqlQuery="select id,supplier,name,trend,price,freight,endPrice,density from price where flag = 1 order by supplier,name";
+		let data = {};
+		query(sqlQuery,function(err,result){
+		    if(err){
+			   logger.error(`SQL error: ${err}!`);
+			   data.code = "-200";
+			   data.message = "数据查询失败"
+			   res.send(data);
+		    }else{
+				data.data = result;
+				 data.code = "200";
+				 data.message = "数据查询成功"
+				res.send(data);
+				logger.info("数据查询成功");
+		    }
+		}) 
+	},
+	queryMessage: function(req,res) {
+		let sqlQuery="select message from header_info";
+		let data = {};
+		query(sqlQuery,function(err,result){
+		    if(err){
+			   logger.error(`SQL error: ${err}!`);
+			   data.code = "-200";
+			   data.message = "头部数据查询失败"
+			   res.send(data);
+		    }else{
+				 data.data = result;
+				 data.code = "200";
+				 data.message = "头部数据查询成功"
+				res.send(data);
+				logger.info("头部数据查询成功");
+		    }
+		}) 
+	},
+	queryAllPriceOrderByEndPrice: function(req,res) {
+		let sqlQuery=`select id,supplier,name,trend,price,freight,endPrice,density from price where flag = 1 order by endPrice `;
 		let data = {};
 		query(sqlQuery,function(err,result){
 		    if(err){
@@ -31,9 +66,9 @@ let price = {
 		let trend = req.query.trend;  
 		let price = req.query.price;
 		let density = req.query.density;
+		let endPrice = Number(price/1000*density).toFixed(2);
 		let time = util.getNowFormatDate();
-		
-		let sqlQuery=`insert into price (supplier,name,trend,price,density,createTime,updateTime) values ('${supplier}','${name}','${trend}',${price},${density},'${time}','${time}')`;
+		let sqlQuery=`insert into price (supplier,name,trend,price,density,endPrice,createTime,updateTime) values ('${supplier}','${name}','${trend}',${price},${density},'${endPrice}','${time}','${time}')`;
 		query(sqlQuery,function(err,result){
 		    if(err){
 				logger.error(`SQL error: ${err}!`);
@@ -56,8 +91,9 @@ let price = {
 		let trend = req.query.trend;  
 		let price = req.query.price;
 		let density = req.query.density; 
+		let endPrice = Number(price/1000*density).toFixed(2);
 		let time = util.getNowFormatDate();
-		let sqlQuery=`update price set supplier = '${supplier}', name = '${name}', trend = '${trend}', price = ${price}, density = ${density},updateTime = '${time}' where id = '${id}'`;
+		let sqlQuery=`update price set supplier = '${supplier}', name = '${name}', trend = '${trend}', price = ${price}, density = ${density}, endPrice = ${endPrice}, updateTime = '${time}' where id = '${id}'`;
 		query(sqlQuery,function(err,result){
 			if(err){
 				logger.error(`SQL error: ${err}!`);

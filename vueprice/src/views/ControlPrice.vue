@@ -1,5 +1,5 @@
 <template>
-  <div id="wtable" style="width:100%">
+  <div id="ctable" style="width:100%">
     <el-table
       :data="tableData"
       border
@@ -308,7 +308,7 @@ export default {
 
 
 <style lang="scss" >
-#wtable {
+#ctable {
   .render_label {
     p {
       margin: 0;

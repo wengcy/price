@@ -15,6 +15,17 @@ export default new Router({
       path: '/price',
       name: 'controlPrice',
       component: () => import('./views/ControlPrice.vue')
+    },
+    {
+      path: '/system',
+      name: 'system',
+      component: () => import('./views/System.vue')
+    },
+    {
+      path: '/message',
+      name: 'message',
+      component: () => import('./views/Message.vue')
     }
   ]
 })
+
