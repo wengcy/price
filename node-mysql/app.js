@@ -21,7 +21,9 @@ httpServer.listen(80,"172.16.100.87",function(){
 //     console.log("服务开启成功")
 // });
 
-app.use(cors());
+// app.use(cors());
+
+app.use(express.static(path.join(__dirname,'public')))
 app.use(express.static(path.resolve(__dirname, './dist')))
 
 app.get('/', function(req, res) {

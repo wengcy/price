@@ -14,17 +14,27 @@ export default new Router({
     {
       path: '/price',
       name: 'controlPrice',
-      component: () => import('./views/ControlPrice.vue')
+      component: () => import('./views/system/ControlPrice.vue')
     },
     {
       path: '/system',
       name: 'system',
-      component: () => import('./views/System.vue')
+      component: () => import('./views/system/System.vue')
     },
     {
       path: '/message',
       name: 'message',
-      component: () => import('./views/Message.vue')
+      component: () => import('./views/system/Message.vue')
+    },
+    {
+      path: '/car',
+      name: 'car',
+      component: () => import('./views/system/Car.vue')
+    },
+    {
+      path: '/postage',
+      name: 'postage',
+      component: () => import('./views/postage.vue')
     }
   ]
 })

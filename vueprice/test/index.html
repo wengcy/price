@@ -1,0 +1,22 @@
+<html>
+    <head>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+      <script src="jquery.form.js"></script>  
+      
+    </head>
+    <body>
+        <form action="http://172.16.100.87/price/queryPrice" method="get" id="formdata" encType="text/plain">
+
+            id:<input type="text" name="id"  value="[]"/><br>
+        
+        </form>
+ 
+        <script>
+            $("#formdata").ajaxSubmit(function(data) {     
+                console.log(data)  
+            });
+       
+
+        </script>
+    </body>
+</html>

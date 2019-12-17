@@ -2,7 +2,35 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Button, Link,Select, Dialog, Input, Option, Table, TableColumn, Form, FormItem, Message,MessageBox} from 'element-ui';
+
+import { 
+  Button, 
+  Link,Select, 
+  Dialog, Input, 
+  Option, Table, 
+  TableColumn, 
+  Form, FormItem, 
+  Message,
+  MessageBox
+} from 'element-ui';
+
+import { 
+  DropdownMenu,
+  DropdownItem,
+  Tab,
+  Tabs,
+  Card ,
+  Uploader,
+  Toast  
+} from 'vant';
+
+Vue.use(DropdownMenu);
+Vue.use(DropdownItem);
+Vue.use(Tab);
+Vue.use(Tabs);
+Vue.use(Card );
+Vue.use(Uploader);
+Vue.use(Toast);
 
 import '@/assets/css/common.scss'
 import * as filters from './filters'
@@ -22,6 +50,7 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Form);
 Vue.use(FormItem);
+
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$message = Message
 

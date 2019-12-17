@@ -109,6 +109,8 @@ let price = {
 		}) 
 	},
 	deletePriceById: function(req,res) {
+		console.log(req.query.url)
+		console.log(req.query.id)
 		let data = {};
 		let id = req.query.id; 
 		let time = util.getNowFormatDate();

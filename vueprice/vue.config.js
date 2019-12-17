@@ -12,9 +12,9 @@ module.exports = {
     config.plugins.delete('prefetch');
     config.resolve.alias
       .set('@', resolve('src'));
-      config
-      .plugin('webpack-bundle-analyzer')
-      .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin) .init(Plugin => new Plugin());
+      // config
+      // .plugin('webpack-bundle-analyzer')
+      // .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin) .init(Plugin => new Plugin());
   },
   // 修改webpack的配置
   configureWebpack: () => {

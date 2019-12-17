@@ -22,17 +22,17 @@
       style="width:100%"
       header-cell-class-name = "headerStyle "
     >
-      <el-table-column prop="supplier" label="供应商"></el-table-column>
-      <el-table-column prop="name" label="品名"></el-table-column>
-      <el-table-column prop="price" label="单价,(元/吨)" :render-header="renderHeader">
+      <el-table-column prop="supplier" label="供应商" min-width="30%"></el-table-column>
+      <el-table-column prop="name" label="品名" min-width="10%"></el-table-column>
+      <el-table-column prop="price" label="单价,(元/吨)" :render-header="renderHeader" min-width="15%">
         <template slot-scope="scope">
           {{scope.row.price}}
           <span v-if="scope.row.trend =='涨'" class="blue">↑</span>
           <span v-else-if="scope.row.trend =='跌'" class="red">↓</span>
         </template>
       </el-table-column>
-      <el-table-column prop="density" label="密度"></el-table-column>
-      <el-table-column label="运费,(元)" prop="freight" :render-header="renderHeader" width="80px">
+      <el-table-column prop="density" label="密度" min-width="15%"></el-table-column>
+      <el-table-column label="运费,(元)" prop="freight" :render-header="renderHeader" min-width="15%">
         <template slot-scope="scope">
           <div class="el-input el-input--mini">
             <input
@@ -48,17 +48,20 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="endPrice" label="单位价,(元/升)"  :render-header="renderHeader">
+      <el-table-column prop="endPrice" label="单位价,(元/升)"  :render-header="renderHeader" min-width="15%">
       </el-table-column>
     </el-table>
     <div class="tc">
       <el-button type="warning"  class="mt15" @click="sortByEndPriceOnBtn()">按单位价{{orderTitle}}序排列</el-button>
     </div>
     <div class="p15">
-      <div class="gray mb15">注：请点击输入运费,计算单位价</div>
-      <span class="mt15">
-        联系电话:</span>
-        <a href="tel:13436143385" class="phone">13436143385</a>
+      <div class="gray mb15">
+        注：请点击输入运费,计算单位价<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;柴油：零售0.05≈批发60<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;汽油：零售0.05≈批发65</div>
+      <span class="mt15 pho"> 联系电话</span><br>
+        胡先生:<a href="tel:13436143385" class="phone">13436143385</a><br>
+        吕先生:<a href="tel:18990591010" class="phone">18990591010</a>
         <el-button type="primary" class="mt15" @click="toggleDialog">自定义计算</el-button>
       
     </div>
@@ -236,12 +239,16 @@ export default {
 
 <style lang="scss" >
 #wtable {
+  .pho {
+    color: #409EFF
+  }
   .header-wrapper {
     background-color: #e2f7ec;
-    padding: 10px;
+    padding: 5px;
+    font-size: 12px;
     >div {
       border: 1px dashed #0c746b;
-      padding: 10px;
+      padding: 4px;
     }
   }
   .tabs-wrap {
@@ -295,10 +302,6 @@ export default {
     width: 100% !important;
   }
   .el-table th {
-    display: table-cell !important;
-  }
-
-  .el-table colgroup {
     display: table-cell !important;
   }
 
