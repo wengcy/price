@@ -1,5 +1,5 @@
 <template>
-  <div id="ctable" style="width:100%">
+  <div id="ctable" style="width:100%" v-wechat-title="$route.meta.title">
     <el-table
       :data="tableData"
       border
@@ -66,12 +66,25 @@
         <el-button @click="toggleDialog">关闭</el-button>
       </div>
     </el-dialog>
+      <div class="van-toast van-toast--middle van-toast--loading" :style="{ display:isShowLoading}">
+        <div class="van-loading van-loading--spinner van-toast__loading">
+          <span class="van-loading__spinner van-loading__spinner--spinner">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </span>
+        </div>
+        <div class="van-toast__text">
+          {{messsage}}
+        </div>
+      </div>
   </div>
 </template>
 <script>
 import FetchData from "@/axios/index";
 import { deep } from "@/assets/js/util";
 import variables  from "@/assets/css/variables.scss";
+
+const path = require('path');
+
 export default {
    
   data() {
@@ -85,6 +98,8 @@ export default {
     };
     return {
       isVisible: false,
+      messsage:"",
+      isShowLoading:"none",
       title: "添加",
       districtList:[],
       carTypeList:[],
@@ -128,6 +143,7 @@ export default {
   },
   mounted() {
     this.queryCar();
+    
   },
   methods: {
     beforeRead(file) {
@@ -141,12 +157,16 @@ export default {
       // 此时可以自行将文件上传至服务器
       this.uploadImg(file)
     },
+   
     uploadImg(file){
+         this.messsage = "上传图片中";
+         this.isShowLoading = "block";
          FetchData.requestPost(`upload`, {file: file.content,fileName:Date.now()+"-"+file.file.name}, "post").then(data => {
             data = data.data;
             if (data.code == "200") {
               console.log(data.url);
               this.form.picture = data.url;
+               this.isShowLoading = "none";
             } else {
             
             }
@@ -166,7 +186,6 @@ export default {
     },
     controlCar() {
       let url = "";
-      this.form.fileList = [];
       if (this.title == "添加") {
         url = "addCar";
       } else if (this.title == "修改") {
@@ -181,10 +200,11 @@ export default {
       });
     },
     requestCar(url, title) {
-     console.log(this.form)
-      FetchData.request(`car/${url}`, this.form, "post").then(data => {
+        this.messsage = "请求中";
+        this.isShowLoading = "block";
+      FetchData.requestPost(`car/${url}`, this.form, "post").then(data => {
         data = data.data;
-        console.log(data);
+         this.isShowLoading = "none";
         if (data.code == "200") {
           this.$message({
             message: `${title}数据成功`,
@@ -208,7 +228,6 @@ export default {
         media: "",
         picture:"",
         fileList:[],
-        uploadImgFlag:false,
         id: ""
       };
       this.title = "添加";
@@ -225,7 +244,7 @@ export default {
         this.$refs["form"].resetFields();
         this.form = Object.assign({},this.form,cloneRow);
         this.form.fileList = [];
-        this.form.fileList.push(cloneRow.picture)
+        this.form.fileList.push({url:"http://172.16.100.87:80/"+this.form.picture});
       });
     },
     toggleDialog() {
@@ -233,6 +252,7 @@ export default {
     },
     deleteCar(row) {
       this.form.id = row.id;
+
       this.$confirm("你确定要删除该条记录吗?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -351,9 +371,6 @@ export default {
   .el-table th div {
     padding-right: 3px !important;
   }
-  .el-input__inner {
-    padding: 5px !important;
-  }
   .el-form--inline .el-form-item {
     display: inline-block;
     vertical-align: top;
@@ -386,5 +403,6 @@ export default {
   .wper100 {
     width: 100% !important;
   }
+ 
 }
 </style>

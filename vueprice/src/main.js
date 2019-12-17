@@ -2,6 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import VueWechatTitle from 'vue-wechat-title'
+Vue.use(VueWechatTitle)
 
 import { 
   Button, 
@@ -21,7 +23,8 @@ import {
   Tabs,
   Card ,
   Uploader,
-  Toast  
+  Toast
+ 
 } from 'vant';
 
 Vue.use(DropdownMenu);
@@ -31,6 +34,7 @@ Vue.use(Tabs);
 Vue.use(Card );
 Vue.use(Uploader);
 Vue.use(Toast);
+
 
 import '@/assets/css/common.scss'
 import * as filters from './filters'

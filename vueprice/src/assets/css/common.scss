@@ -66,5 +66,21 @@ html,body{
     .tc {
         text-align: center;
     }
+    .el-input--mini .el-input__inner {
+        height: auto !important;
+        line-height: normal !important;
+    }
+    .el-input .el-input__inner {
+        height: auto !important;
+        line-height: normal !important;
+        padding:9px 5px !important;
+    }
+    .el-input.is-disabled .el-input__inner {
+        color: gray !important;
+    }
+    .van-toast{
+        white-space:normal;
+        z-index: 999999;
+    }
 }
 

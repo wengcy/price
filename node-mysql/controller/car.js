@@ -83,14 +83,13 @@ let car = {
 	},
 	addCar: function(req,res) {
 		let data = {};
-		console.log(req.query)
-		let district = req.query.district;  
-		let carType= req.query.carType; 
-		let picture = req.query.picture; 
-		let tel = req.query.tel; 
-		let loadWeight = req.query.loadWeight; 
-		let carNo = req.query.carNo; 
-		let media = req.query.media; 
+		let district = req.body.district;  
+		let carType= req.body.carType; 
+		let picture = req.body.picture; 
+		let tel = req.body.tel; 
+		let loadWeight = req.body.loadWeight; 
+		let carNo = req.body.carNo; 
+		let media = req.body.media; 
 		let time = util.getNowFormatDate();
 		let sqlQuery=`insert into car (district,carType,picture,tel,loadWeight,carNo,media,createTime,updateTime) values ('${district}','${carType}','${picture}','${tel}','${loadWeight}','${carNo}','${media}','${time}','${time}')`;
 		query(sqlQuery,function(err,result){
@@ -109,14 +108,14 @@ let car = {
 	},
 	updateCarById: function(req,res) {
 		let data = {};
-		let id = req.query.id; 
-		let district = req.query.district;  
-		let carType = req.query.carType; 
-		let picture = req.query.picture; 
-		let tel = req.query.tel; 
-		let loadWeight = req.query.loadWeight; 
-		let carNo = req.query.carNo; 
-		let media = req.query.media;   
+		let id = req.body.id; 
+		let district = req.body.district;  
+		let carType = req.body.carType; 
+		let picture = req.body.picture; 
+		let tel = req.body.tel; 
+		let loadWeight = req.body.loadWeight; 
+		let carNo = req.body.carNo; 
+		let media = req.body.media;   
 		let time = util.getNowFormatDate();
 		let sqlQuery=`update car set district = '${district}',carType = '${carType}',picture = '${picture}',tel = '${tel}',loadWeight = '${loadWeight}',carNo = '${carNo}',media = '${media}', updateTime = '${time}' where id = '${id}'`;
 		query(sqlQuery,function(err,result){
@@ -135,7 +134,7 @@ let car = {
 	},
 	deleteCarById: function(req,res) {
 		let data = {};
-		let id = req.query.id; 
+		let id = req.body.id; 
 		let sqlQuery=`delete from car where id = ${id}`
 		query(sqlQuery,function(err,result){
 		    if(err){

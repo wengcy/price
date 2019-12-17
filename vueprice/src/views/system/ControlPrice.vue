@@ -1,5 +1,5 @@
 <template>
-  <div id="ctable" style="width:100%">
+  <div id="ctable" style="width:100%" v-wechat-title="$route.meta.title">
     <el-table
       :data="tableData"
       border
@@ -341,9 +341,7 @@ export default {
   .el-table th div {
     padding-right: 3px !important;
   }
-  .el-input__inner {
-    padding: 5px !important;
-  }
+ 
   .el-form--inline .el-form-item {
     display: inline-block;
     vertical-align: top;

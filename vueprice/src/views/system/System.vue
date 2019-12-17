@@ -1,5 +1,5 @@
 <template>
-    <div class="system">
+    <div class="system" v-wechat-title="$route.meta.title">
         <div class="title">
             后台管理系统
         </div>

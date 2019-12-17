@@ -45,11 +45,10 @@ class FetchData {
     params:params,
     isLoading:isLoading
     };
-    console.log(config)
     //this.setInterceptor(instance);
     return instance(config);
   }
-  requestPost(url,data = {},method = 'get',isLoading = false) {
+  requestPost(url,data = {},method = 'post',isLoading = false) {
     const instance = axios.create();
     const config = {
      baseURL: this.baseURL,

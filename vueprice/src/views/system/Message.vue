@@ -1,5 +1,5 @@
 <template>
-    <div class="meaasge">
+    <div class="meaasge" v-wechat-title="$route.meta.title">
         <el-input type="textarea" v-model="headerInfo"  autosize></el-input>
         <div class="gray mt15">注：{{tip}}</div>
         <el-button type="primary" class="mt15" @click="requestPrice">修改头部信息</el-button>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-wechat-title="$route.meta.title">
         <div>
             <van-dropdown-menu>
                 <van-dropdown-item v-model="value" :options="districtList" @change="changeDistrict"/>

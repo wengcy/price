@@ -12,7 +12,7 @@
            </div>
         </div>
         <div class="item-right">
-          <a href="tel:item.tel">立即联系</a>
+          <a :href="'tel:'+item.tel">立即联系</a>
         </div>
       </div>
     </div>

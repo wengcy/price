@@ -1,5 +1,5 @@
 <template>
-  <div id="wtable" style="width:100%">
+  <div id="wtable" style="width:100%" v-wechat-title="$route.meta.title">
      <div class="header-wrapper m15">
       <div v-html="headerInfo">
       </div>
@@ -57,8 +57,8 @@
     <div class="p15">
       <div class="gray mb15">
         注：请点击输入运费,计算单位价<br>
-        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;柴油：零售0.05≈批发60<br>
-        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;汽油：零售0.05≈批发65</div>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;柴油：零售0.05≈批发60<br>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;汽油：零售0.05≈批发65</div>
       <span class="mt15 pho"> 联系电话</span><br>
         胡先生:<a href="tel:13436143385" class="phone">13436143385</a><br>
         吕先生:<a href="tel:18990591010" class="phone">18990591010</a>
@@ -239,6 +239,7 @@ export default {
 
 <style lang="scss" >
 #wtable {
+  
   .pho {
     color: #409EFF
   }
@@ -316,9 +317,6 @@ export default {
   .el-table th div {
     padding-right: 3px !important;
   }
-  .el-input__inner {
-    padding: 5px !important;
-  }
   .el-form--inline .el-form-item {
       display: inline-block;
       vertical-align: top;
@@ -342,6 +340,5 @@ export default {
   .el-dialog__body {
     padding:0 15px;
   }
-  
 }
 </style>
