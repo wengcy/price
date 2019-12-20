@@ -13,8 +13,6 @@
       <el-table-column prop="carType" label="车型"></el-table-column>
       <el-table-column prop="carNo" label="车牌号"></el-table-column>
       <el-table-column prop="loadWeight" label="载重,(吨)" :render-header="renderHeader"></el-table-column>
-      <el-table-column prop="tel" label="电话"></el-table-column>
-      <el-table-column prop="media" label="介质"></el-table-column>
       <el-table-column label="操作" width="100px" prop="id">
         <template slot-scope="scope">
           <el-link
@@ -56,6 +54,24 @@
         </el-form-item>
          <el-form-item label="电话:" prop="tel">
           <el-input v-model="form.tel" type="number" autocomplete="off" placeholder="请输入联系电话"></el-input>
+        </el-form-item>
+         <el-form-item label="开始时间:" prop="startTime">
+            <el-date-picker
+              v-model="form.startTime"
+              type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="请选择开始时间">
+            </el-date-picker>
+        </el-form-item>
+        <el-form-item label="期限:" prop="limitDays">
+           <el-select v-model="form.limitDays" placeholder="请选择期限">
+            <el-option
+              v-for="item in limitDaysList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
           <el-form-item label="图片:" prop="picture">
             <van-uploader :after-read="afterRead" :max-count="1" :before-read="beforeRead" v-model="form.fileList"/>
@@ -103,6 +119,10 @@ export default {
       title: "添加",
       districtList:[],
       carTypeList:[],
+      limitDaysList:[{
+          value: "一月",
+          label: "一月"
+        }],
       mediaList: [
         {
           value: "汽油",
@@ -122,6 +142,8 @@ export default {
         media: "",
         picture:"",
         id: "",
+        startTime:"",
+        limitDays:"",
         fileList:[],
       },
       rules: {
@@ -132,7 +154,9 @@ export default {
         tel: [{ required: true, message: "请输入联系电话", trigger: "change" },
               {validator: validateTel, trigger: "change"}
         ],
-        media: [{ required: true, message: "请选择介质", trigger: "change" }]
+        media: [{ required: true, message: "请选择介质", trigger: "change" }],
+        startTime: [{ required: true, message: "请选择开始时间", trigger: "change" }],
+        limitDays: [{ required: true, message: "请选择期限", trigger: "change" }]
       },
       mergeSpanArr: [], // 空数组，记录每一行的合并数
       mergeSpanArrIndex: "", // mergeSpanArr的索引
@@ -202,6 +226,7 @@ export default {
     requestCar(url, title) {
         this.messsage = "请求中";
         this.isShowLoading = "block";
+        console.log(this.form)
       FetchData.requestPost(`car/${url}`, this.form, "post").then(data => {
         data = data.data;
          this.isShowLoading = "none";
@@ -227,6 +252,8 @@ export default {
         tel: "",
         media: "",
         picture:"",
+        startTime:"",
+        limitDays:"",
         fileList:[],
         id: ""
       };
@@ -244,7 +271,7 @@ export default {
         this.$refs["form"].resetFields();
         this.form = Object.assign({},this.form,cloneRow);
         this.form.fileList = [];
-        this.form.fileList.push({url:"http://172.16.100.87:80/"+this.form.picture});
+        this.form.fileList.push({url:"http://192.144.184.96:80/"+this.form.picture});
       });
     },
     toggleDialog() {
@@ -353,7 +380,12 @@ export default {
   .el-table th {
     display: table-cell !important;
   }
-
+  .el-date-editor.el-input, .el-date-editor.el-input__inner {
+    width:100%;
+  }
+  .el-icon-time:before {
+    content:"";
+  }
   .el-table colgroup {
     display: table-cell !important;
   }
@@ -379,7 +411,7 @@ export default {
     //justify-content: space-between;
   }
   .el-form--inline .el-form-item__label {
-    width: 80px;
+    width: 90px;
     text-align-last: justify;
   }
   .el-form-item__content {

@@ -13,7 +13,8 @@ import {
   TableColumn, 
   Form, FormItem, 
   Message,
-  MessageBox
+  MessageBox,
+  DatePicker
 } from 'element-ui';
 
 import { 
@@ -23,7 +24,8 @@ import {
   Tabs,
   Card ,
   Uploader,
-  Toast
+  Toast,
+  Field 
  
 } from 'vant';
 
@@ -34,6 +36,8 @@ Vue.use(Tabs);
 Vue.use(Card );
 Vue.use(Uploader);
 Vue.use(Toast);
+Vue.use(Field)
+
 
 
 import '@/assets/css/common.scss'
@@ -54,6 +58,7 @@ Vue.use(Table);
 Vue.use(TableColumn);
 Vue.use(Form);
 Vue.use(FormItem);
+Vue.use(DatePicker);
 
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$message = Message

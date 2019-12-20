@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import {getCookie,isUndefined } from '@/assets/js/util'
 
 Vue.use(Router)
 
-export default new Router({
-  mode:'hash',
-  routes: [
+
+let routes = [
     {
       path: '/',
       name: 'price',
@@ -19,7 +19,8 @@ export default new Router({
       name: 'controlPrice',
       component: () => import('./views/system/ControlPrice.vue'),
       meta:{
-        title: '油价管理'
+        title: '油价管理',
+        needLogin: true
       }
     },
     {
@@ -27,7 +28,8 @@ export default new Router({
       name: 'system',
       component: () => import('./views/system/System.vue'),
       meta:{
-        title: '系统管理'
+        title: '系统管理',
+        needLogin: true
       }
     },
     {
@@ -35,7 +37,8 @@ export default new Router({
       name: 'message',
       component: () => import('./views/system/Message.vue'),
       meta:{
-        title: '消息管理'
+        title: '消息管理',
+        needLogin: true
       }
     },
     {
@@ -43,7 +46,16 @@ export default new Router({
       name: 'car',
       component: () => import('./views/system/Car.vue'),
       meta:{
-        title: '车管理'
+        title: '车管理',
+        needLogin: true
+      }
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('./views/system/Login.vue'),
+      meta:{
+        title: '系统登录'
       }
     },
     {
@@ -55,5 +67,31 @@ export default new Router({
       }
     }
   ]
-})
 
+  const router = new VueRouter({
+    routes 
+  })
+  
+  router.beforeEach((to, from, next) => {
+    let token = getCookie('token'); 
+    let isLogin = !isUndefined(token);
+    if (isLogin) {
+      // 如果是登录
+      if (to.name === 'login') {
+          next({name:'system'})
+      } else {
+          next();
+      }
+    }else{
+      console.log( to)
+      let flag = to.matched.some(item => item.meta.needLogin);
+      console.log('baishi='+flag)
+      if (flag) {
+        next('/login');
+      } else {
+        next();
+      }
+    }
+  });
+
+  export default router;

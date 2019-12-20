@@ -24,7 +24,8 @@ let car = {
 		}) 
 	},
 	queryAllDistrict:function(req,res){
-		let sqlQuery=`select distinct district from car`;
+		let time = util.getNowFormatDate();
+		let sqlQuery=`select distinct district from car where '${time}' < endTime`;
 		let data = {};
 		query(sqlQuery,function(err,result){
 		    if(err){
@@ -43,7 +44,8 @@ let car = {
 	},
 	queryCarTypeListByDistrict: function(req,res){
 		let district = req.query.district; 
-		let sqlQuery=`select distinct carType from car where district = '${district}'`;
+		let time = util.getNowFormatDate();
+		let sqlQuery=`select distinct carType from car where district = '${district}' and '${time}' < endTime`;
 		let data = {};
 		query(sqlQuery,function(err,result){
 		    if(err){
@@ -63,7 +65,8 @@ let car = {
 	queryCarListByDistrictAndCarType: function(req,res) {
 		let district = req.query.district;  
 		let carType = req.query.carType; 
-		let sqlQuery=`select * from car  where district = '${district}' and carType = '${carType}' order by loadWeight`;
+		let time = util.getNowFormatDate();
+		let sqlQuery=`select * from car  where district = '${district}' and carType = '${carType}' and '${time}' < endTime order by loadWeight`;
 		console.log(sqlQuery)
 		let data = {};
 		query(sqlQuery,function(err,result){
@@ -90,8 +93,15 @@ let car = {
 		let loadWeight = req.body.loadWeight; 
 		let carNo = req.body.carNo; 
 		let media = req.body.media; 
+		let startTime = req.body.startTime;
+		let limitDays = req.body.limitDays;
+		let dateArr = startTime.split(" ");
+		let endTime = "";
+		if(limitDays == "一月") {
+			endTime =  util.getNextMonth(dateArr[0])+" "+dateArr[1];
+		}
 		let time = util.getNowFormatDate();
-		let sqlQuery=`insert into car (district,carType,picture,tel,loadWeight,carNo,media,createTime,updateTime) values ('${district}','${carType}','${picture}','${tel}','${loadWeight}','${carNo}','${media}','${time}','${time}')`;
+		let sqlQuery=`insert into car (district,carType,picture,tel,loadWeight,carNo,media,createTime,updateTime,startTime,limitDays,endTime) values ('${district}','${carType}','${picture}','${tel}','${loadWeight}','${carNo}','${media}','${time}','${time}','${startTime}','${limitDays}','${endTime}')`;
 		query(sqlQuery,function(err,result){
 		    if(err){
 				logger.error(`SQL error: ${err}!`);
@@ -99,7 +109,7 @@ let car = {
 			   data.message = "数据添加失败"
 			   res.send(data);
 		    }else{
-				logger.info(`添加数据：省份：${district}、车型:${carType}、图片:${picture}、电话:${tel}、载重:${loadWeight}、车号:${carNo}、介质:${media}`);
+				logger.info(`添加数据：省份：${district}、车型:${carType}、图片:${picture}、电话:${tel}、载重:${loadWeight}、车号:${carNo}、介质:${media}、开始时间：${startTime}、期限：${limitDays}、结束时间:${endTime}`,);
 				data.code = "200";
 				data.message = "数据添加成功"
 				res.send(data);
@@ -115,9 +125,16 @@ let car = {
 		let tel = req.body.tel; 
 		let loadWeight = req.body.loadWeight; 
 		let carNo = req.body.carNo; 
-		let media = req.body.media;   
+		let media = req.body.media; 
+		let startTime = req.body.startTime;
+		let limitDays = req.body.limitDays;
+		let dateArr = startTime.split(" ");
+		let endTime = "";
+		if(limitDays == "一月") {
+			endTime =  util.getNextMonth(dateArr[0])+" "+dateArr[1];
+		}  
 		let time = util.getNowFormatDate();
-		let sqlQuery=`update car set district = '${district}',carType = '${carType}',picture = '${picture}',tel = '${tel}',loadWeight = '${loadWeight}',carNo = '${carNo}',media = '${media}', updateTime = '${time}' where id = '${id}'`;
+		let sqlQuery=`update car set district = '${district}',carType = '${carType}',picture = '${picture}',tel = '${tel}',loadWeight = '${loadWeight}',carNo = '${carNo}',media = '${media}', updateTime = '${time}', startTime = '${startTime}', limitDays = '${limitDays}', endTime = '${endTime}'  where id = '${id}'`;
 		query(sqlQuery,function(err,result){
 			if(err){
 				logger.error(`SQL error: ${err}!`);
@@ -125,7 +142,7 @@ let car = {
 				data.message = "数据修改失败"
 				res.send(data);
 			 }else{
-				logger.info(`修改数据：id：${id}、省份：${district}、车型:${carType}、图片:${picture}、电话:${tel}、载重:${loadWeight}、车号:${loadWeight}、介质:${media}`);
+				logger.info(`修改数据：id：${id}、省份：${district}、车型:${carType}、图片:${picture}、电话:${tel}、载重:${loadWeight}、车号:${loadWeight}、介质:${media}、开始时间：${startTime}、期限：${limitDays}、结束时间:${endTime}`);
 				 data.code = "200";
 				 data.message = "数据修改成功"
 				 res.send(data);

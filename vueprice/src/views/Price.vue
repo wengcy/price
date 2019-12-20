@@ -48,7 +48,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="endPrice" label="单位价,(元/升)"  :render-header="renderHeader" min-width="15%">
+      <el-table-column prop="endPrice" label="批发价,(元/升)"  :render-header="renderHeader" min-width="15%">
       </el-table-column>
     </el-table>
     <div class="tc">
@@ -56,7 +56,7 @@
     </div>
     <div class="p15">
       <div class="gray mb15">
-        注：请点击输入运费,计算单位价<br>
+        注：请点击输入运费,计算参考批发价<br>
         &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;柴油：零售0.05≈批发60<br>
         &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;汽油：零售0.05≈批发65</div>
       <span class="mt15 pho"> 联系电话</span><br>
@@ -82,7 +82,7 @@
               @focus="setEmpty(form,'freight')"
               @input="getDialogEndPrice(form)" min="0" autocomplete="off" placeholder="请输入运费"></el-input>
         </el-form-item>
-         <el-form-item label="单位价:">
+         <el-form-item label="批发价:">
           <el-input :disabled="true" v-model="form.endPrice" type="number" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
