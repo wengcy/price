@@ -2,6 +2,12 @@ html,body{
     margin:0;
     padding: 0;
     font-size: 15px;
+    width: 100%;
+    height: 100%;
+    #app {
+        width: 100%;
+        height: 100%; 
+    }
     .headerStyle {
         background: $theme-one;
         color: #fff;

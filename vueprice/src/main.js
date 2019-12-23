@@ -25,8 +25,10 @@ import {
   Card ,
   Uploader,
   Toast,
-  Field 
- 
+  Field,
+  DatetimePicker,
+  Popup,
+  Skeleton
 } from 'vant';
 
 Vue.use(DropdownMenu);
@@ -36,7 +38,10 @@ Vue.use(Tabs);
 Vue.use(Card );
 Vue.use(Uploader);
 Vue.use(Toast);
-Vue.use(Field)
+Vue.use(Field);
+Vue.use(DatetimePicker);
+Vue.use(Popup);
+Vue.use(Skeleton);
 
 
 

@@ -83,9 +83,7 @@ let routes = [
           next();
       }
     }else{
-      console.log( to)
       let flag = to.matched.some(item => item.meta.needLogin);
-      console.log('baishi='+flag)
       if (flag) {
         next('/login');
       } else {

@@ -13,6 +13,20 @@
       <el-table-column prop="carType" label="车型"></el-table-column>
       <el-table-column prop="carNo" label="车牌号"></el-table-column>
       <el-table-column prop="loadWeight" label="载重,(吨)" :render-header="renderHeader"></el-table-column>
+      <el-table-column prop="limitTip" label="期限">
+        <template slot-scope="scope">
+          <span v-if="scope.row.limitTip == '已到期'" style="color:gray">
+              {{scope.row.limitTip}}
+          </span>
+          <span v-else-if="scope.row.limitTip == '未到期'" >
+              {{scope.row.limitTip}}
+          </span>
+          <span v-else style="color:#F56C6C">
+              {{scope.row.limitTip}}
+          </span>
+          
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="100px" prop="id">
         <template slot-scope="scope">
           <el-link
@@ -56,12 +70,10 @@
           <el-input v-model="form.tel" type="number" autocomplete="off" placeholder="请输入联系电话"></el-input>
         </el-form-item>
          <el-form-item label="开始时间:" prop="startTime">
-            <el-date-picker
-              v-model="form.startTime"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
-              placeholder="请选择开始时间">
-            </el-date-picker>
+            <el-input v-model="form.startTime"  @focus="showPopFn()" autocomplete="off" readonly placeholder="请点击选择日期"></el-input>
+            <van-popup v-model="show" position="bottom" :style="{ height: '40%' }">
+              <van-datetime-picker v-model="currentDate" type="datetime" @change="changeFn()" @confirm="confirmFn()" @cancel="cancelFn()" />
+            </van-popup>
         </el-form-item>
         <el-form-item label="期限:" prop="limitDays">
            <el-select v-model="form.limitDays" placeholder="请选择期限">
@@ -113,6 +125,9 @@ export default {
       }
     };
     return {
+      show: false, // 用来显示弹出层
+      minDate: new Date(),
+      currentDate: new Date(),
       isVisible: false,
       messsage:"",
       isShowLoading:"none",
@@ -167,9 +182,48 @@ export default {
   },
   mounted() {
     this.queryCar();
-    
   },
   methods: {
+      showPopFn() {
+        this.show = true;
+      },
+      changeFn() { // 值变化是触发
+        this.changeDate = this.currentDate // Tue Sep 08 2020 00:00:00 GMT+0800 (中国标准时间)
+      },
+      confirmFn() { // 确定按钮
+        this.form.startTime = this.timeFormat(this.currentDate);
+        this.show = false;
+      },
+      cancelFn(){
+        this.show = false;
+      },
+      timeFormat(time) { // 时间格式化 2019-09-08
+        let year = time.getFullYear();
+        let month = time.getMonth() + 1;
+        let day = time.getDate();
+        var hours = time.getHours();
+        var minutes = time.getMinutes();
+        var seconds = time.getSeconds();
+        if (month >= 1 && month <= 9) {
+	        month = "0" + month;
+        }
+        if (day >= 0 && day <= 9) {
+            day = "0" + day;
+        }
+
+        if (hours >= 1 && hours <= 9) {
+          hours = "0" + hours;
+        }
+
+        if (minutes >= 0 && minutes <= 9) {
+          minutes = "0" + minutes;
+        }
+
+        if (seconds >= 0 && seconds <= 9) {
+          seconds = "0" + seconds;
+        }
+        return year + '-' + month + '-' + day + ' '+ hours + ':' + minutes +':'+seconds;
+      },
     beforeRead(file) {
       if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/jpg') {
         this.$message.error("请上传jpeg、png、jpg图片");
@@ -252,7 +306,7 @@ export default {
         tel: "",
         media: "",
         picture:"",
-        startTime:"",
+        startTime:this.timeFormat(new Date()),
         limitDays:"",
         fileList:[],
         id: ""

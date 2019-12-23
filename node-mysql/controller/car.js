@@ -3,6 +3,8 @@ const util = require('../public/util')
 var log4js = require('log4js');
 var logger = log4js.getLogger();
 logger.level = 'debug';
+var moment = require('moment');
+moment().format();
 
 let car = {
 	queryAllCar: function(req,res) {
@@ -15,6 +17,25 @@ let car = {
 			   data.message = "数据查询失败"
 			   res.send(data);
 		    }else{
+				result.map((item) => {
+					let currentDate = util.getNowFormatDate();
+					let entTime = item.endTime;
+					console.log(entTime);
+					let isBefore = moment(currentDate).isBefore(entTime); 
+					 //2、如果是之前，小于5天则提示
+					if(isBefore) {
+						let diff = moment(entTime).diff(currentDate,"days");
+						console.log(`相差${diff}`)
+						if(diff <= 5) {
+							let tip = moment(entTime).toNow();
+							item.limitTip = `${tip.split(" ")[0]}天后`;
+						}else {
+							item.limitTip = "未到期";
+						}
+					}else {
+						item.limitTip = "已到期";
+					}
+				})
 				data.data = result;
 				 data.code = "200";
 				 data.message = "数据查询成功"
