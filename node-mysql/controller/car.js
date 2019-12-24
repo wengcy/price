@@ -1,8 +1,7 @@
 let query = require('../config/db')
 const util = require('../public/util')
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+let logger =  require('../public/logs')
+
 var moment = require('moment');
 moment().format();
 
@@ -20,12 +19,10 @@ let car = {
 				result.map((item) => {
 					let currentDate = util.getNowFormatDate();
 					let entTime = item.endTime;
-					console.log(entTime);
 					let isBefore = moment(currentDate).isBefore(entTime); 
 					 //2、如果是之前，小于5天则提示
 					if(isBefore) {
 						let diff = moment(entTime).diff(currentDate,"days");
-						console.log(`相差${diff}`)
 						if(diff <= 5) {
 							let tip = moment(entTime).toNow();
 							item.limitTip = `${tip.split(" ")[0]}天后`;

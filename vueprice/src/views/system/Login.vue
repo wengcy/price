@@ -1,5 +1,5 @@
 <template>
-	<div class="login hvcenter wper100 hper100">
+	<div class="login hvcenter wper100 hper100" v-wechat-title="$route.meta.title">
 		<div class="hvcenter login-wrap">
 			<p class="c-white login-title">后台管理系统</p>
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">

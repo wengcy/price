@@ -1,8 +1,6 @@
 let query = require('../config/db')
 const util = require('../public/util')
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+let logger =  require('../public/logs')
 
 let user = {
 	login: function(req,res) {

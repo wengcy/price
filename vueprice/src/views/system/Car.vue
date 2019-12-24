@@ -86,7 +86,7 @@
           </el-select>
         </el-form-item>
           <el-form-item label="图片:" prop="picture">
-            <van-uploader :after-read="afterRead" :max-count="1" :before-read="beforeRead" v-model="form.fileList"/>
+            <van-uploader :max-size= "size" :after-read="afterRead" :max-count="1" :before-read="beforeRead" v-model="fileList"/>
          </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -111,8 +111,6 @@ import FetchData from "@/axios/index";
 import { deep } from "@/assets/js/util";
 import variables  from "@/assets/css/variables.scss";
 
-const path = require('path');
-
 export default {
    
   data() {
@@ -125,6 +123,7 @@ export default {
       }
     };
     return {
+      size:2097162,//2M
       show: false, // 用来显示弹出层
       minDate: new Date(),
       currentDate: new Date(),
@@ -148,6 +147,7 @@ export default {
           label: "柴油"
         }
       ],
+      fileList:[],
       form: {
         district: "",
         carType: "",
@@ -158,8 +158,7 @@ export default {
         picture:"",
         id: "",
         startTime:"",
-        limitDays:"",
-        fileList:[],
+        limitDays:""
       },
       rules: {
         district: [{ required: true, message: "请输入区域", trigger: "change" }],
@@ -225,8 +224,13 @@ export default {
         return year + '-' + month + '-' + day + ' '+ hours + ':' + minutes +':'+seconds;
       },
     beforeRead(file) {
+      console.log(file)
       if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/jpg') {
         this.$message.error("请上传jpeg、png、jpg图片");
+        return false;
+      }
+      if(file.size > this.size) {
+        this.$message.error("图片大小不能超过2M");
         return false;
       }
       return true;
@@ -243,10 +247,10 @@ export default {
             data = data.data;
             if (data.code == "200") {
               console.log(data.url);
-              this.form.picture = data.url;
+                this.form.picture = data.url;
                this.isShowLoading = "none";
             } else {
-            
+              this.$message.error("上传图片错误");
             }
         });
     },
@@ -292,7 +296,7 @@ export default {
           this.queryCar();
           this.isVisible = false;
         } else {
-         
+         this.$message.error("查询数据失败");
         }
       });
     },
@@ -308,7 +312,6 @@ export default {
         picture:"",
         startTime:this.timeFormat(new Date()),
         limitDays:"",
-        fileList:[],
         id: ""
       };
       this.title = "添加";
@@ -324,8 +327,8 @@ export default {
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
         this.form = Object.assign({},this.form,cloneRow);
-        this.form.fileList = [];
-        this.form.fileList.push({url:"http://192.144.184.96:80/"+this.form.picture});
+        this.fileList = [];
+        this.fileList.push({url:"http://192.144.184.96:80/"+this.form.picture});
       });
     },
     toggleDialog() {
