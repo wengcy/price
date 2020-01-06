@@ -14,7 +14,7 @@ router.get('/queryAllPriceOrderByEndPrice', function(req,res){
 router.post('/addPrice', function (req,res){
 	price.addPrice(req,res);
 });
-router.get('/deletePrice', function (req,res){
+router.post('/deletePrice', function (req,res){
 	price.deletePriceById(req,res);
 });
 router.post('/updatePrice',function (req,res){

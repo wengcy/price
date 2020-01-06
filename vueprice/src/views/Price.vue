@@ -1,8 +1,8 @@
 <template>
   <div id="wtable" style="width:100%" v-wechat-title="$route.meta.title">
      <div class="header-wrapper m15">
-      <div v-html="headerInfo">
-      </div>
+      <pre v-html="headerInfo">
+      </pre>
     </div> 
     <div class="tabs-wrap">
         <div class="tabs-item" v-for="(item,index) in nameList" :key="item" @click="getListByName(index)"> 
@@ -22,9 +22,9 @@
       style="width:100%"
       header-cell-class-name = "headerStyle "
     >
-      <el-table-column prop="supplier" label="供应商" min-width="30%"></el-table-column>
+      <el-table-column prop="supplier" label="供应商" min-width="27%"></el-table-column>
       <el-table-column prop="name" label="品名" min-width="10%"></el-table-column>
-      <el-table-column prop="price" label="单价,(元/吨)" :render-header="renderHeader" min-width="15%">
+      <el-table-column prop="price" label="参考批发,(元/吨)" :render-header="renderHeader" min-width="18%">
         <template slot-scope="scope">
           {{scope.row.price}}
           <span v-if="scope.row.trend =='涨'" class="blue">↑</span>
@@ -48,7 +48,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="endPrice" label="批发价,(元/升)"  :render-header="renderHeader" min-width="15%">
+      <el-table-column prop="endPrice" label="单位价,(元/升)"  :render-header="renderHeader" min-width="15%">
       </el-table-column>
     </el-table>
     <div class="tc">
@@ -56,12 +56,12 @@
     </div>
     <div class="p15">
       <div class="gray mb15">
-        注：请点击输入运费,计算参考批发价<br>
+        注：请点击输入运费,计算单位价<br>
         &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;柴油：零售0.05≈批发60<br>
         &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;汽油：零售0.05≈批发65</div>
       <span class="mt15 pho"> 联系电话</span><br>
-        胡先生:<a href="tel:13436143385" class="phone">13436143385</a><br>
-        吕先生:<a href="tel:18990591010" class="phone">18990591010</a>
+        胡先生:<a href="tel:17823608628" class="phone">17823608628</a><br>
+        吕先生:<a href="tel:15826146489" class="phone">15826146489</a>
         <el-button type="primary" class="mt15" @click="toggleDialog">自定义计算</el-button>
       
     </div>
@@ -94,7 +94,6 @@
 </template>
 <script>
 import FetchData from '@/axios/index';
-import variables  from "@/assets/css/variables.scss";
 import { deep } from "@/assets/js/util";
 export default {
   data() {
