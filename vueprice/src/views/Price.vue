@@ -51,19 +51,19 @@
       <el-table-column prop="endPrice" label="单位价,(元/升)"  :render-header="renderHeader" min-width="15%">
       </el-table-column>
     </el-table>
-    <div class="tc">
-      <el-button type="warning"  class="mt15" @click="sortByEndPriceOnBtn()">按单位价{{orderTitle}}序排列</el-button>
-    </div>
+    
     <div class="p15">
-      <div class="gray mb15">
-        注：请点击输入运费,计算单位价<br>
-        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;柴油：零售0.05≈批发60<br>
-        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;汽油：零售0.05≈批发65</div>
-      <span class="mt15 pho"> 联系电话</span><br>
-        胡先生:<a href="tel:17823608628" class="phone">17823608628</a><br>
-        吕先生:<a href="tel:15826146489" class="phone">15826146489</a>
-        <el-button type="primary" class="mt15" @click="toggleDialog">自定义计算</el-button>
-      
+      <span class="mt15 pho"> 咨询电话:</span>
+        <a href="tel:15826146489" class="phone">15826146489(吕)、</a>
+        <a href="tel:17823608628" class="phone">17823608628(胡)</a>
+        <div class="between">
+           <el-button type="primary" class="mt15" @click="sortByEndPriceOnBtn">按单位价{{orderTitle}}序排列</el-button>
+           <el-button type="primary" class="mt15" @click="toggleDialog">自定义计算</el-button>
+        </div>
+       
+       <div class="gray mb15 tip">
+        注: 柴油:零售0.05≈批发60&nbsp;&nbsp;汽油:零售0.05≈批发65
+        </div>
     </div>
     <el-dialog title="计算单位价" :visible="isVisible" width="80%" :show-close="false" >
       <el-form :model="form" :inline="true">
@@ -242,6 +242,11 @@ export default {
   .pho {
     color: #409EFF
   }
+  .tip {
+    font-size: 13px;
+    color: $theme-one;
+    margin-top: 10px;
+  }
   .header-wrapper {
     background-color: #e2f7ec;
     padding: 5px;
@@ -292,8 +297,7 @@ export default {
   }
 .phone {
   color: $theme-one;
-  font-size: 24px;
-  margin-left: 10px;
+  font-size: 15px;
 }
   .cell {
     text-align: center;
@@ -331,7 +335,14 @@ export default {
     text-align: center;
   }
   .el-button--primary {
-    width: 100%;
+    width: 48%;
+  }
+  .el-button+.el-button {
+    margin-left: 0;
+  }
+  .between {
+    display: flex;
+    justify-content: space-between;
   }
   .el-dialog__header {
       text-align: center;
