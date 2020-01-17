@@ -42,6 +42,15 @@ let routes = [
       }
     },
     {
+      path: '/product',
+      name: 'product',
+      component: () => import('./views/system/Product.vue'),
+      meta:{
+        title: '产品管理',
+        needLogin: true
+      }
+    },
+    {
       path: '/car',
       name: 'car',
       component: () => import('./views/system/Car.vue'),
@@ -64,6 +73,22 @@ let routes = [
       component: () => import('./views/postage.vue'),
       meta:{
         title: '联系运车'
+      }
+    },
+    {
+      path: '/productIndex',
+      name: 'productIndex',
+      component: () => import('./views/product.vue'),
+      meta:{
+        title: '商城产品'
+      }
+    },
+    {
+      path: '/productDetail',
+      name: 'productDetail',
+      component: () => import('./views/productDetail.vue'),
+      meta:{
+        title: '产品详情'
       }
     }
   ]

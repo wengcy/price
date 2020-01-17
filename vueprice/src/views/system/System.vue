@@ -6,6 +6,7 @@
         <router-link :to="{ name: 'controlPrice'}"><el-button type="primary" class="mt15">价格管理</el-button></router-link>
         <router-link :to="{ name: 'message'}"><el-button type="primary" class="mt15">头部信息管理</el-button></router-link>
         <router-link :to="{ name: 'car'}"><el-button type="primary" class="mt15">车管理</el-button></router-link>
+         <router-link :to="{ name: 'product'}"><el-button type="primary" class="mt15">产品管理</el-button></router-link>
     </div>
 </template>
 <script>
