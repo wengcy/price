@@ -32,7 +32,7 @@ export default {
        this.queryDistrict();
     },
     methods:{
-        changeCarType(name,title){
+        changeCarType(){
             this.queryCarListByDistrictIdAndCarType(this.value,this.active);
         },
         changeDistrict(value){
