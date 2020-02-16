@@ -1,12 +1,13 @@
-$border-color:#ccc;
-$theme-one:#FA7362;
-$theme-two:#f2f2f2;
-$theme-three:#409EFF;
-$theme-four:#999;
 html,body{
     margin:0;
     padding: 0;
     font-size: 15px;
+    width: 100%;
+    height: 100%;
+    #app {
+        width: 100%;
+        height: 100%; 
+    }
     .headerStyle {
         background: $theme-one;
         color: #fff;
@@ -59,11 +60,33 @@ html,body{
     .mt15{
         margin-top: 15px;;
     }
+    .m15 {
+        margin: 15px;
+    }
+    .mtb15 {
+        margin:15px 0;
+    }
     .small-font {
         font-size: 12px;
     }
     .tc {
         text-align: center;
+    }
+    .el-input--mini .el-input__inner {
+        height: auto !important;
+        line-height: normal !important;
+    }
+    .el-input .el-input__inner {
+        height: auto !important;
+        line-height: normal !important;
+        padding:9px 5px !important;
+    }
+    .el-input.is-disabled .el-input__inner {
+        color: gray !important;
+    }
+    .van-toast{
+        white-space:normal;
+        z-index: 999999;
     }
 }
 

@@ -1,23 +1,21 @@
-var express = require('express')
-var app = express()
-let connection = require('../config/db')
-var Mock = require('mockjs')
-const request = require('request')
+let query = require('../config/db')
+const util = require('../public/util')
+let logger =  require('../public/logs')
+
 let user = {
-	 login: function(req,res) {
-		var name=req.query.name;  
-		var password = req.query.password; 
-		 let sqlQuery="select * from sys_user where name='"+name+"'and password='"+password+"'";
-		connection.query(sqlQuery,function(err,result){
-		    if(err){
-		       console.log(`SQL error: ${err}!`);
-		    }else{
-				console.log({data:result,token:"123456"});
-				res.send({data:result,token:"123456"});
-		    }
-		}) 
-	} 
-	
+	login: function(req,res) {
+		let username = req.query.username; 
+		let password = req.query.password;
+		console.log(`username=${username} password=${password}`)
+		let data = {};
+		if(username === "dingyou" && password === "dingyou123456") {
+			data.code = "200";
+			res.send(data);
+		}else{
+			data.code = "-200";
+		 	res.send(data);
+		}
+	}
 }
 
 module.exports = user

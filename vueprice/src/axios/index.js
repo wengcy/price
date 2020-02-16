@@ -41,13 +41,27 @@ class FetchData {
      baseURL: this.baseURL,
     timeout: this.timeout,
     method:method,
-	url:url,
-	params:params,
-	isLoading:isLoading
+    url:url,
+    params:params,
+    isLoading:isLoading
     };
     //this.setInterceptor(instance);
     return instance(config);
   }
+  requestPost(url,data = {},method = 'post',isLoading = false) {
+    const instance = axios.create();
+    const config = {
+     baseURL: this.baseURL,
+    timeout: this.timeout,
+    method:method,
+    url:url,
+    data:data,
+    isLoading:isLoading
+    };
+    //this.setInterceptor(instance);
+    return instance(config);
+  }
+  
 }
 
 export default new FetchData();

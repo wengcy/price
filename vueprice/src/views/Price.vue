@@ -1,32 +1,45 @@
 <template>
-  <div id="wtable" style="width:100%">
+  <div id="wtable" style="width:100%" v-wechat-title="$route.meta.title">
+     <div class="header-wrapper m15">
+      <pre v-html="headerInfo">
+      </pre>
+    </div> 
+    <div class="tabs-wrap">
+        <div class="tabs-item" v-for="(item,index) in nameList" :key="item" @click="getListByName(index)"> 
+           <div class="mtabs">
+             <div class="tab-text" :class="currentTabIndex == index ? 'activeTab' :''">
+                {{item}}
+             </div>
+           </div>
+        </div>
+    </div>
+    
     <el-table
       :data="tableData"
       border
+      stripe
       size="small"
       style="width:100%"
-      :span-method="arraySpanMethod"
-      :row-style="changeCss"
       header-cell-class-name = "headerStyle "
     >
-      <el-table-column prop="supplier" label="供应商"></el-table-column>
-      <el-table-column prop="name" label="品名"></el-table-column>
-      <el-table-column prop="price" label="单价,(元/吨)" :render-header="renderHeader">
+      <el-table-column prop="supplier" label="供应商" min-width="27%"></el-table-column>
+      <el-table-column prop="name" label="品名" min-width="10%"></el-table-column>
+      <el-table-column prop="price" label="参考批发,(元/吨)" :render-header="renderHeader" min-width="18%">
         <template slot-scope="scope">
           {{scope.row.price}}
           <span v-if="scope.row.trend =='涨'" class="blue">↑</span>
           <span v-else-if="scope.row.trend =='跌'" class="red">↓</span>
         </template>
       </el-table-column>
-      <el-table-column prop="density" label="密度"></el-table-column>
-      <el-table-column label="运费,(元)" prop="freight" :render-header="renderHeader" width="80px">
+      <el-table-column prop="density" label="密度" min-width="15%"></el-table-column>
+      <el-table-column label="运费,(元)" prop="freight" :render-header="renderHeader" min-width="15%">
         <template slot-scope="scope">
           <div class="el-input el-input--mini">
             <input
               :value="scope.row.freight"
               @blur="setZero(scope.row,'freight')"
               @focus="setEmpty(scope.row,'freight')"
-              @input="getEndPrice(scope)"
+              @input="getEndPrice(scope.row)"
               type="number"
               autocomplete="off"
               class="el-input__inner"
@@ -35,19 +48,22 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="endPrice" label="单位价,(元/升)" :render-header="renderHeader">
-        <template
-          slot-scope="scope"
-        >{{(scope.row.price+scope.row.freight)/1000*scope.row.density | keepTwoNum}}</template>
+      <el-table-column prop="endPrice" label="单位价,(元/升)"  :render-header="renderHeader" min-width="15%">
       </el-table-column>
     </el-table>
+    
     <div class="p15">
-      <div class="gray mb15">注：请点击输入运费,计算单位价</div>
-      <span class="mt15">
-        联系电话:</span>
-        <a href="tel:13436143385" class="phone">13436143385</a>
-        <el-button type="primary" class="mt15" @click="toggleDialog">自定义计算</el-button>
-      
+      <span class="mt15 pho"> 咨询电话:</span>
+        <a href="tel:15826146489" class="phone">15826146489(吕)、</a>
+        <a href="tel:17823608628" class="phone">17823608628(胡)</a>
+        <div class="between">
+           <el-button type="primary" class="mt15" @click="sortByEndPriceOnBtn">按单位价{{orderTitle}}序排列</el-button>
+           <el-button type="primary" class="mt15" @click="toggleDialog">自定义计算</el-button>
+        </div>
+       
+       <div class="gray mb15 tip">
+        注: 柴油:零售0.05≈批发60&nbsp;&nbsp;汽油:零售0.05≈批发65
+        </div>
     </div>
     <el-dialog title="计算单位价" :visible="isVisible" width="80%" :show-close="false" >
       <el-form :model="form" :inline="true">
@@ -66,7 +82,7 @@
               @focus="setEmpty(form,'freight')"
               @input="getDialogEndPrice(form)" min="0" autocomplete="off" placeholder="请输入运费"></el-input>
         </el-form-item>
-         <el-form-item label="单位价:">
+         <el-form-item label="批发价:">
           <el-input :disabled="true" v-model="form.endPrice" type="number" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -78,36 +94,100 @@
 </template>
 <script>
 import FetchData from '@/axios/index';
+import { deep } from "@/assets/js/util";
 export default {
   data() {
     return {
       isVisible:false,
+      orderTitle:"降",
       form:{
         price:0,
         density:0,
         freight:0,
         endPrice:0
       },
-      mergeSpanArr: [], // 空数组，记录每一行的合并数
-      mergeSpanArrIndex: "", // mergeSpanArr的索引
-      oddSupplierArr: [],
-      evenSupplierArr: [],
-      tableData: []
+      headerInfo:"",
+      tableData: [],
+      oldData:[],
+      nameList: [],
+      sortByEndPrice:[],
+      currentTabIndex:0,
     };
   },
   mounted() {
-    FetchData.request("price/queryPrice").then((data) => {
-      data = data.data;
-      if(data.code == "200") {
-        this.tableData = data.data;
-        this.setMergeArr(this.tableData);
-        this.getSupplier(this.tableData);
-      }else {
-        this.$message.error('查询数据失败');
-      }
-    })
+    this.queryList();
+    this.queryMessage();
   },
   methods: {
+    queryMessage() {
+       FetchData.request("message/queryMessage").then((data) => {
+        data = data.data;
+        if(data.code == "200") {
+          this.headerInfo = data.data[0].message;
+        }else {
+          this.$message.error('头信息查询失败');
+        }
+      })
+    },
+    queryList(){
+      FetchData.request("price/queryAllPriceOrderByEndPrice").then((data) => {
+        data = data.data;
+        if(data.code == "200") {
+          this.oldData = data.data;
+          console.log(this.oldData)
+          let nameArr = this.getNameList(data.data);
+          this.nameList =  nameArr.sort();
+          this.sortByEndPrice = new Array(this.nameList.length).fill("ASC");
+          this.getListByName(0);
+        }else {
+          this.$message.error('查询数据失败');
+        }
+      })
+    },
+    getNameList(data) {
+      let nameList = data.reduce((nameArr, item) => {
+        if (!nameArr.includes(item.name)) {
+          nameArr.push(item.name);
+        }
+        return nameArr;
+      }, []);
+      return nameList;
+    },
+    getListByName(index){
+      this.currentTabIndex = index;
+      this.fillterByName();
+    },
+    sortByEndPriceOnBtn(){//点击升序降序按钮，重新排列数据
+      let sortName = this.sortByEndPrice[this.currentTabIndex];
+      if(sortName === "ASC") {
+        this.orderTitle = "升",
+        this.sortByEndPrice[this.currentTabIndex] = "DESC";
+        this.tableData.sort((a,b)=>{ return b.endPrice-a.endPrice})
+      }else {
+        this.orderTitle = "降",
+         this.sortByEndPrice[this.currentTabIndex] = "ASC";
+         this.tableData.sort((a,b)=>{ return a.endPrice-b.endPrice})
+      }
+    },
+    sortByEndPriceOnName(){
+      let sortName = this.sortByEndPrice[this.currentTabIndex];
+      if(sortName === "ASC") {
+        this.orderTitle = "降",
+        this.tableData.sort((a,b)=>{ return a.endPrice-b.endPrice})
+      }else {
+        this.orderTitle = "升",
+        this.tableData.sort((a,b)=>{ return b.endPrice-a.endPrice})
+      }
+    },
+    fillterByName(){
+      let name = this.nameList[this.currentTabIndex];
+      let currentData = deep(this.oldData);
+      let list = currentData.filter((item) => {
+        return item.name == name;
+      })
+      this.tableData = list;
+      this.sortByEndPriceOnName();
+    },
     toggleDialog(){
       this.isVisible = !this.isVisible;
     },
@@ -122,48 +202,26 @@ export default {
         row[props] = 0;
       }
     },
-    getEndPrice(scope) {
-      let index = scope.$index;
-      let rowNum = this.mergeSpanArr[index];
-      //截取数组长度[index-(index+rowNum)）
-      let endIndex = index+rowNum;
+    getEndPrice(row) {
       let value = event.target.value;
       let intValue = value ? parseInt(event.target.value) : 0;
-      this.tableData.forEach((item,i)=>{
-        if(i >= index  && i < endIndex) {
-          item.freight = intValue;
+      row.freight = intValue;
+      let endPrice = ((row.price + row.freight) / 1000) * row.density;
+      row.endPrice = Number(endPrice).toFixed(2);
+      this.setOldData(row.id, row.freight, row.endPrice)
+    },
+    setOldData(id,freight,endPrice){
+      this.oldData.forEach((item)=>{
+        if(item.id == id) {
+          item.freight = freight;
+          item.endPrice = endPrice;
         }
       })
     },
-     getDialogEndPrice(row) {
+    getDialogEndPrice(row) {
       let endPrice = ((row.price + row.freight) / 1000) * row.density;
       row.endPrice = Number(endPrice).toFixed(2);
     },
-   
-    getSupplier(data) {
-      let supplier = data.reduce((supplierArr, item) => {
-        if (!supplierArr.includes(item.supplier)) {
-          supplierArr.push(item.supplier);
-        }
-        return supplierArr;
-      }, []);
-      supplier.forEach((element, index) => {
-        if (index % 2) {
-          this.oddSupplierArr.push(element);
-        } else {
-          this.evenSupplierArr.push(element);
-        }
-      });
-    },
-    changeCss({ row}) {
-      // 定义changeCss函数，这样当表格中的相应行满足自己设定的条件是就可以将该行css样式改变
-      if (this.oddSupplierArr.includes(row.supplier)) {
-        return "background:#C3CDD6";
-      } else if (this.evenSupplierArr.includes(row.supplier)) {
-        return "background:#EAD0B3";
-      }
-    },
-
     renderHeader(h, { column }) {
       let labelArr = column.label.split(",");
       return (
@@ -172,36 +230,6 @@ export default {
           <p class="small-font">{labelArr[1]}</p>
         </span>
       );
-    },
-    arraySpanMethod({ rowIndex,columnIndex }) {
-      if (columnIndex === 0 || columnIndex === 4) {
-        const _row = this.mergeSpanArr[rowIndex];
-        const _col = _row > 0 ? 1 : 0;
-        return {
-          rowspan: _row,
-          colspan: _col
-        };
-      }
-    },
-    setMergeArr(data) {
-      for (var i = 0; i < data.length; i++) {
-        if (i === 0) {
-          this.mergeSpanArr.push(1);
-          this.mergeSpanArrIndex = 0;
-        } else {
-          // 判断当前元素与上一个元素是否相同
-          if (data[i].supplier === data[i - 1].supplier) {
-            this.mergeSpanArr[this.mergeSpanArrIndex] += 1;
-            this.mergeSpanArr.push(0);
-          } else {
-            this.mergeSpanArr.push(1);
-            this.mergeSpanArrIndex = i;
-          }
-        }
-      }
-      // 如果第一条记录索引为0，向数组中push 1，设置索引值
-      // 如果不是第一条记录，判断与前一条记录是否相等，相等则向mergeSpanArr添加元素0
-      // 且将前一条记录+1，即需要合并的行数+1，直到得到所有需要合并的行数
     }
   }
 };
@@ -210,15 +238,66 @@ export default {
 
 <style lang="scss" >
 #wtable {
+  
+  .pho {
+    color: #409EFF
+  }
+  .tip {
+    font-size: 13px;
+    color: $theme-one;
+    margin-top: 10px;
+  }
+  .header-wrapper {
+    background-color: #e2f7ec;
+    padding: 5px;
+    font-size: 12px;
+    >div {
+      border: 1px dashed #0c746b;
+      padding: 4px;
+    }
+  }
+  .tabs-wrap {
+    margin: 10px 0 0 0;
+    padding:0 7px;
+    overflow: hidden;
+    .tabs-item {
+          width: 33%;
+          float: left;
+          margin-bottom: 10px;
+         .mtabs {
+             padding:0 7px;
+           .tab-text {
+              height: 40px;
+              border:1px solid $theme-three;
+              border-radius:4px;
+              line-height: 40px;
+              text-align: center;
+              color: $theme-three;
+           }
+           .activeTab {
+                background-color: $theme-three;
+                color: white;
+           }
+        }
+    }
+   
+  }
+  
   .render_label {
     p {
       margin: 0;
     }
   }
+  .el-table__row--striped td{
+    background-color: $theme-six !important;
+  }
+
+   .el-table__row td{
+    background-color: $theme-five;
+  }
 .phone {
-  color: #FA7362;
-  font-size: 24px;
-  margin-left: 10px;
+  color: $theme-one;
+  font-size: 15px;
 }
   .cell {
     text-align: center;
@@ -230,12 +309,6 @@ export default {
     display: table-cell !important;
   }
 
-  .el-table colgroup {
-    display: table-cell !important;
-  }
-  .el-table--enable-row-hover .el-table__body tr:hover > td {
-    background-color: inherit !important;
-  }
   .el-table .cell,
   .el-table th div,
   .el-table--border td:first-child .cell,
@@ -246,9 +319,6 @@ export default {
   .el-table .cell,
   .el-table th div {
     padding-right: 3px !important;
-  }
-  .el-input__inner {
-    padding: 5px !important;
   }
   .el-form--inline .el-form-item {
       display: inline-block;
@@ -265,7 +335,14 @@ export default {
     text-align: center;
   }
   .el-button--primary {
-    width: 100%;
+    width: 48%;
+  }
+  .el-button+.el-button {
+    margin-left: 0;
+  }
+  .between {
+    display: flex;
+    justify-content: space-between;
   }
   .el-dialog__header {
       text-align: center;
@@ -273,6 +350,5 @@ export default {
   .el-dialog__body {
     padding:0 15px;
   }
-  
 }
 </style>
