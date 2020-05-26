@@ -45,6 +45,7 @@ let product = {
 		}) 
 	},
 	addProduct: function(req,res) {
+		console.log('我执行添加方法');
 		let data = {};
 		let name = req.body.name;  
 		let picture= req.body.picture; 
@@ -54,6 +55,7 @@ let product = {
 		let sqlQuery=`insert into product (name,picture,price,detail,createTime,updateTime) values ('${name}','${picture}','${price}','${detail}','${time}','${time}')`;
 		query(sqlQuery,function(err,result){
 		    if(err){
+				console.log(err);
 				logger.error(`SQL error: ${err}!`);
 		       data.code = "-200";
 			   data.message = "数据添加失败"

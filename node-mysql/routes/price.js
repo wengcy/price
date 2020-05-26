@@ -8,6 +8,9 @@ router.get('/queryPrice', function (req,res){
 router.get('/queryMessage', function (req,res){
 	price.queryMessage(req,res);
 });
+router.get('/queryPriceByPage', function (req,res){
+	price.queryPriceByPage(req,res);
+});
 router.get('/queryAllPriceOrderByEndPrice', function(req,res){
     price.queryAllPriceOrderByEndPrice(req,res)
 })

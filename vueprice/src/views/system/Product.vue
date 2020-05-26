@@ -29,62 +29,83 @@
     <el-dialog :title="title+'产品信息'" :visible="isVisible" width="80%" :show-close="false">
       <el-form :model="form" :inline="true" :rules="rules" ref="form">
         <el-form-item label="名称:" prop="name">
-             <el-input v-model="form.name" type="text" autocomplete="off" placeholder="请输入名称"></el-input>
+          <el-input v-model="form.name" type="text" autocomplete="off" placeholder="请输入名称"></el-input>
         </el-form-item>
         <el-form-item label="价格:" prop="price">
-             <el-input v-model="form.price" type="text" autocomplete="off" placeholder="请输入价格"></el-input>
+          <el-input v-model="form.price" type="text" autocomplete="off" placeholder="请输入价格"></el-input>
         </el-form-item>
         <el-form-item label="图片:" prop="picture">
-            <van-uploader :max-size= "size" name = "picture" :after-read="afterRead" :max-count="1" :before-read="beforeRead" v-model="fileList"/>
-         </el-form-item>
-         <el-form-item label="详情:" prop="detail">
-            <van-uploader :max-size= "size" name = "detail" @delete="deleteFile" :after-read="afterRead" :before-read="beforeRead" v-model="detailFileList"/>
-         </el-form-item>
+          <van-uploader
+            :max-size="size"
+            name="picture"
+            :after-read="afterRead"
+            :max-count="1"
+            :before-read="beforeRead"
+            v-model="fileList"
+          />
+        </el-form-item>
+        <el-form-item label="详情:" prop="detail">
+          <van-uploader
+            :max-size="size"
+            name="detail"
+            @delete="deleteFile"
+            :after-read="afterRead"
+            :before-read="beforeRead"
+            v-model="detailFileList"
+          />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="controlProduct">{{title}}</el-button>
         <el-button @click="toggleDialog">关闭</el-button>
       </div>
     </el-dialog>
-      <div class="van-toast van-toast--middle van-toast--loading" :style="{ display:isShowLoading}">
-        <div class="van-loading van-loading--spinner van-toast__loading">
-          <span class="van-loading__spinner van-loading__spinner--spinner">
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-          </span>
-        </div>
-        <div class="van-toast__text">
-          {{messsage}}
-        </div>
+    <div class="van-toast van-toast--middle van-toast--loading" :style="{ display:isShowLoading}">
+      <div class="van-loading van-loading--spinner van-toast__loading">
+        <span class="van-loading__spinner van-loading__spinner--spinner">
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+        </span>
       </div>
+      <div class="van-toast__text">{{messsage}}</div>
+    </div>
   </div>
 </template>
 <script>
 import FetchData from "@/axios/index";
 import { deep } from "@/assets/js/util";
-import variables  from "@/assets/css/variables.scss";
-import config from '@/config/index'
-
+import variables from "@/assets/css/variables.scss";
+import config from "@/config/index";
 
 export default {
-   
   data() {
     return {
-      size:2097162,//2M
+      size: 2097162, //2M
       isVisible: false,
-      messsage:"",
-      isShowLoading:"none",
+      messsage: "",
+      isShowLoading: "none",
       title: "添加",
-      fileList:[],
-      detailFileList:[],
+      fileList: [],
+      detailFileList: [],
       form: {
         name: "",
         price: "",
         picture: "",
-        detail: ""
+        detail: []
       },
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "change" }],
-        price: [{ required: true, message: "请输入价格", trigger: "change" }],
+        price: [{ required: true, message: "请输入价格", trigger: "change" }]
       },
       mergeSpanArr: [], // 空数组，记录每一行的合并数
       mergeSpanArrIndex: "", // mergeSpanArr的索引
@@ -98,54 +119,63 @@ export default {
   },
   methods: {
     beforeRead(file) {
-      if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/jpg') {
+      if (
+        file.type !== "image/jpeg" &&
+        file.type !== "image/png" &&
+        file.type !== "image/jpg"
+      ) {
         this.$message.error("请上传jpeg、png、jpg图片");
         return false;
       }
-      if(file.size > this.size) {
+      if (file.size > this.size) {
         this.$message.error("图片大小不能超过2M");
         return false;
       }
       return true;
     },
-    afterRead(file,name) {
+    afterRead(file, name) {
       // 此时可以自行将文件上传至服务器
-      this.uploadImg(file,name);
+      this.uploadImg(file, name);
     },
-    deleteFile(file){
-      let detailPicture = this.form.detail.split(",");
-      let list = [];
-      for(let i = 0;i < detailPicture.length; i++){
-           list.push({url:detailPicture[i]});
-      }
-      for(let i = 0; i< list.length; i++){
-        if(file.url.indexOf(list[i].url)){
-          list.splice(i,1);
+    deleteFile(file) {
+      debugger;
+      let list = this.form.detail;
+      let name = "";
+      for (let i = 0; i < list.length; i++) {
+        if (file.hasOwnProperty("url")) {
+          name = file.url;
+          if (name.indexOf(list[i]) > -1) {
+            list.splice(i, 1);
+          }
+        } else {
+          name = file.file.name;
+          if (list[i].indexOf(name) >-1) {
+            list.splice(i, 1);
+          }
         }
       }
-      let detail = ""
-      for(let i = 0; i< list.length; i++){
-            detail+= list[i].url+","
-      }
-     
-      this.form.detail = detail.substring(0);
+
     },
-    uploadImg(file,name){
-         this.messsage = "上传图片中";
-         this.isShowLoading = "block";
-         FetchData.requestPost(`upload`, {file: file.content,fileName:Date.now()+"-"+file.file.name}, "post").then(data => {
-            data = data.data;
-            if (data.code == "200") {
-              if(name.name == "picture") {
-                this.form.picture = data.url;
-              }else{
-                this.form.detail += data.url+",";
-              }
-               this.isShowLoading = "none";
-            } else {
-              this.$message.error("上传图片错误");
-            }
-        });
+    uploadImg(file, name) {
+      this.messsage = "上传图片中";
+      this.isShowLoading = "block";
+      FetchData.requestPost(
+        `upload`,
+        { file: file.content, fileName: Date.now() + "-" + file.file.name },
+        "post"
+      ).then(data => {
+        data = data.data;
+        if (data.code == "200") {
+          if (name.name == "picture") {
+            this.form.picture = data.url;
+          } else {
+            this.form.detail.push(data.url);
+          }
+          this.isShowLoading = "none";
+        } else {
+          this.$message.error("上传图片错误");
+        }
+      });
     },
     queryProduct() {
       FetchData.request("product/queryProduct").then(data => {
@@ -175,14 +205,14 @@ export default {
       });
     },
     requestProduct(url, title) {
-        this.messsage = "请求中";
-        this.isShowLoading = "block";
-        if(this.form.detail != ""){
-          this.form.detail = this.form.detail.substring(0, this.form.detail.length - 1);
-        }
+      this.messsage = "请求中";
+      this.isShowLoading = "block";
+      if (this.form.detail.length > 0 ) {
+        this.form.detail = this.form.detail.join(",");
+      }
       FetchData.requestPost(`product/${url}`, this.form, "post").then(data => {
         data = data.data;
-         this.isShowLoading = "none";
+        this.isShowLoading = "none";
         if (data.code == "200") {
           this.$message({
             message: `${title}数据成功`,
@@ -191,7 +221,7 @@ export default {
           this.queryProduct();
           this.isVisible = false;
         } else {
-         this.$message.error("查询数据失败");
+          this.$message.error("查询数据失败");
         }
       });
     },
@@ -201,9 +231,11 @@ export default {
         name: "",
         price: "",
         picture: "",
-        detail: "",
-        tel: "",
+        detail: [],
+        tel: ""
       };
+      this.fileList = [];
+      this.detailFileList = [];
       this.title = "添加";
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
@@ -215,16 +247,21 @@ export default {
       this.title = "修改";
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
-        this.form = Object.assign({},this.form,cloneRow);
+        this.form = Object.assign({}, this.form, cloneRow);
         this.fileList = [];
         this.detailFileList = [];
-        let url = process.env.NODE_ENV === 'development' ? config.baseUrl.dev : config.baseUrl.pro;
-        this.fileList.push({url:url+this.form.picture});
-        if(this.form.detail !=""){
-          let detailPicture = this.form.detail.split(",");
-          for(let i = 0;i < detailPicture.length; i++){
-            this.detailFileList.push({url:url+detailPicture[i]});
+        let url =
+          process.env.NODE_ENV === "development"
+            ? config.baseUrl.dev
+            : config.baseUrl.pro;
+        this.fileList.push({ url: url + this.form.picture });
+        if (this.form.detail.length > 0) {
+          this.form.detail = this.form.detail.split(',');
+          for (let i = 0; i < this.form.detail.length; i++) {
+            this.detailFileList.push({ url: url + this.form.detail[i] });
           }
+        }else{
+          this.form.detail = [];
         }
       });
     },
@@ -262,9 +299,9 @@ export default {
     changeCss({ row }) {
       // 定义changeCss函数，这样当表格中的相应行满足自己设定的条件是就可以将该行css样式改变
       if (this.oddNameArr.includes(row.name)) {
-        return "background:"+variables.trOddColor;
+        return "background:" + variables.trOddColor;
       } else if (this.evenNameArr.includes(row.name)) {
-        return "background:"+variables.trEvenColor;
+        return "background:" + variables.trEvenColor;
       }
     },
 
@@ -336,11 +373,12 @@ export default {
   .el-table th {
     display: table-cell !important;
   }
-  .el-date-editor.el-input, .el-date-editor.el-input__inner {
-    width:100%;
+  .el-date-editor.el-input,
+  .el-date-editor.el-input__inner {
+    width: 100%;
   }
   .el-icon-time:before {
-    content:"";
+    content: "";
   }
   .el-table colgroup {
     display: table-cell !important;
@@ -371,7 +409,7 @@ export default {
     text-align-last: justify;
   }
   .el-form-item__content {
-    flex:1;
+    flex: 1;
   }
   .el-select {
     width: 100%;
@@ -391,6 +429,5 @@ export default {
   .wper100 {
     width: 100% !important;
   }
- 
 }
 </style>

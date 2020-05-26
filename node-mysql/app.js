@@ -14,9 +14,14 @@ var credentials = {key: privateKey, cert: certificate};
 
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
-httpServer.listen(80,"172.16.100.33",function(){
+// httpServer.listen(80,"192.168.3.18",function(){
+//     console.log("服务开启成功")
+// });
+
+httpServer.listen(80,"172.16.100.59",function(){
     console.log("服务开启成功")
 });
+
 // httpsServer.listen(80,"172.16.100.87",function(){
 //     console.log("服务开启成功")
 // });

@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import VueWechatTitle from 'vue-wechat-title'
+
 Vue.use(VueWechatTitle)
 
 import { 
@@ -48,6 +49,8 @@ Vue.use(Skeleton);
 import '@/assets/css/common.scss'
 import * as filters from './filters'
 Vue.config.productionTip = false
+Vue.config.devtools = true;
+
 
 Object.keys(filters).forEach((key) => {
   Vue.filter(key, filters[key]);
