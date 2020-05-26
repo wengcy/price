@@ -51,8 +51,9 @@ let product = {
 		let picture= req.body.picture; 
 		let price = req.body.price; 
 		let detail = req.body.detail; 
+		let tel = req.body.tel; 
 		let time = util.getNowFormatDate();
-		let sqlQuery=`insert into product (name,picture,price,detail,createTime,updateTime) values ('${name}','${picture}','${price}','${detail}','${time}','${time}')`;
+		let sqlQuery=`insert into product (name,picture,price,detail,createTime,updateTime,tel) values ('${name}','${picture}','${price}','${detail}','${time}','${time}','${tel}')`;
 		query(sqlQuery,function(err,result){
 		    if(err){
 				console.log(err);
@@ -75,8 +76,9 @@ let product = {
 		let picture= req.body.picture; 
 		let price = req.body.price; 
 		let detail = req.body.detail; 
+		let tel = req.body.tel; 
 		let time = util.getNowFormatDate();
-		let sqlQuery=`update product set name = '${name}',picture = '${picture}',price = '${price}',detail = '${detail}', updateTime = '${time}' where id = '${id}'`;
+		let sqlQuery=`update product set name = '${name}',tel = '${tel}',picture = '${picture}',price = '${price}',detail = '${detail}', updateTime = '${time}' where id = '${id}'`;
 		query(sqlQuery,function(err,result){
 			if(err){
 				logger.error(`SQL error: ${err}!`);

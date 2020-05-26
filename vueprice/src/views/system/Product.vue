@@ -11,6 +11,7 @@
     >
       <el-table-column prop="name" label="产品名称"></el-table-column>
       <el-table-column prop="price" label="价格"></el-table-column>
+      <el-table-column prop="tel" label="联系电话"></el-table-column>
       <el-table-column label="操作" width="100px" prop="id">
         <template slot-scope="scope">
           <el-link
@@ -33,6 +34,9 @@
         </el-form-item>
         <el-form-item label="价格:" prop="price">
           <el-input v-model="form.price" type="text" autocomplete="off" placeholder="请输入价格"></el-input>
+        </el-form-item>
+         <el-form-item label="联系电话:" prop="tel">
+          <el-input v-model="form.tel" type="text" autocomplete="off" placeholder="请输入联系电话"></el-input>
         </el-form-item>
         <el-form-item label="图片:" prop="picture">
           <van-uploader
@@ -88,7 +92,16 @@ import variables from "@/assets/css/variables.scss";
 import config from "@/config/index";
 
 export default {
+  
   data() {
+     var validateTel = (rule, value, callback) => {
+      let money = /^\d{11}$/;
+      if (!money.test(value)) {
+        callback(new Error("输入正确的电话"));
+      } else {
+        callback();
+      }
+    };
     return {
       size: 2097162, //2M
       isVisible: false,
@@ -101,11 +114,15 @@ export default {
         name: "",
         price: "",
         picture: "",
-        detail: []
+        detail: [],
+        tel:""
       },
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "change" }],
-        price: [{ required: true, message: "请输入价格", trigger: "change" }]
+        price: [{ required: true, message: "请输入价格", trigger: "change" }],
+        tel: [{ required: true, message: "请输入联系电话", trigger: "change" },
+              {validator: validateTel, trigger: "change"}
+        ]
       },
       mergeSpanArr: [], // 空数组，记录每一行的合并数
       mergeSpanArrIndex: "", // mergeSpanArr的索引

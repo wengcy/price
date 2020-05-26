@@ -10,6 +10,12 @@
         <div class="detail">
             <img :src="item" v-for="item in detailFileList" :key="item">
         </div>
+        <div class="space">
+
+        </div>
+        <div class="fixed">
+          <a :href="'tel:'+result.tel">立即联系</a>
+        </div>
     </div>
 </template>
 <script>
@@ -53,6 +59,23 @@ export default {
 </script>
 <style lang="scss" scoped>
 #productDetail {
+    .space {
+        height: 45px;
+    }
+    .fixed {
+        position: fixed;
+        bottom: 0;
+        background: #409EFF;
+        height: 45px;
+        width: 100%;
+        line-height: 45px;
+        text-align: center;
+        letter-spacing: 10px;
+        a {
+            color: #fff;
+        }
+
+    }
     min-height: 100%;
     background-color: #F1F6F9;
     .banner {

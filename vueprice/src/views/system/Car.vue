@@ -15,16 +15,9 @@
       <el-table-column prop="loadWeight" label="载重,(吨)" :render-header="renderHeader"></el-table-column>
       <el-table-column prop="limitTip" label="期限">
         <template slot-scope="scope">
-          <span v-if="scope.row.limitTip == '已到期'" style="color:gray">
-              {{scope.row.limitTip}}
-          </span>
-          <span v-else-if="scope.row.limitTip == '未到期'" >
-              {{scope.row.limitTip}}
-          </span>
-          <span v-else style="color:#F56C6C">
-              {{scope.row.limitTip}}
-          </span>
-          
+          <span v-if="scope.row.limitTip == '已到期'" style="color:gray">{{scope.row.limitTip}}</span>
+          <span v-else-if="scope.row.limitTip == '未到期'">{{scope.row.limitTip}}</span>
+          <span v-else style="color:#F56C6C">{{scope.row.limitTip}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="100px" prop="id">
@@ -45,19 +38,24 @@
     <el-dialog :title="title+'车信息'" :visible="isVisible" width="80%" :show-close="false">
       <el-form :model="form" :inline="true" :rules="rules" ref="form">
         <el-form-item label="区域:" prop="district">
-             <el-input v-model="form.district" type="text" autocomplete="off" placeholder="请输入区域"></el-input>
+          <el-input v-model="form.district" type="text" autocomplete="off" placeholder="请输入区域"></el-input>
         </el-form-item>
         <el-form-item label="车型:" prop="carType">
-             <el-input v-model="form.carType" type="text" autocomplete="off" placeholder="请输入车型"></el-input>
+          <el-input v-model="form.carType" type="text" autocomplete="off" placeholder="请输入车型"></el-input>
         </el-form-item>
         <el-form-item label="车牌号:" prop="carNo">
           <el-input v-model="form.carNo" type="text" autocomplete="off" placeholder="请输入车牌号"></el-input>
         </el-form-item>
         <el-form-item label="载重:" prop="loadWeight">
-          <el-input v-model="form.loadWeight" type="text" autocomplete="off" placeholder="请输入载重(单位吨)"></el-input>
+          <el-input
+            v-model="form.loadWeight"
+            type="text"
+            autocomplete="off"
+            placeholder="请输入载重(单位吨)"
+          ></el-input>
         </el-form-item>
         <el-form-item label="介质:" prop="media">
-           <el-select v-model="form.media" placeholder="请选择介质">
+          <el-select v-model="form.media" placeholder="请选择介质">
             <el-option
               v-for="item in mediaList"
               :key="item.value"
@@ -66,17 +64,29 @@
             ></el-option>
           </el-select>
         </el-form-item>
-         <el-form-item label="电话:" prop="tel">
+        <el-form-item label="电话:" prop="tel">
           <el-input v-model="form.tel" type="number" autocomplete="off" placeholder="请输入联系电话"></el-input>
         </el-form-item>
-         <el-form-item label="开始时间:" prop="startTime">
-            <el-input v-model="form.startTime"  @focus="showPopFn()" autocomplete="off" readonly placeholder="请点击选择日期"></el-input>
-            <van-popup v-model="show" position="bottom" :style="{ height: '40%' }">
-              <van-datetime-picker v-model="currentDate" type="datetime" @change="changeFn()" @confirm="confirmFn()" @cancel="cancelFn()" />
-            </van-popup>
+        <el-form-item label="开始时间:" prop="startTime">
+          <el-input
+            v-model="form.startTime"
+            @focus="showPopFn()"
+            autocomplete="off"
+            readonly
+            placeholder="请点击选择日期"
+          ></el-input>
+          <van-popup v-model="show" position="bottom" :style="{ height: '40%' }">
+            <van-datetime-picker
+              v-model="currentDate"
+              type="datetime"
+              @change="changeFn()"
+              @confirm="confirmFn()"
+              @cancel="cancelFn()"
+            />
+          </van-popup>
         </el-form-item>
         <el-form-item label="期限:" prop="limitDays">
-           <el-select v-model="form.limitDays" placeholder="请选择期限">
+          <el-select v-model="form.limitDays" placeholder="请选择期限">
             <el-option
               v-for="item in limitDaysList"
               :key="item.value"
@@ -85,34 +95,48 @@
             ></el-option>
           </el-select>
         </el-form-item>
-          <el-form-item label="图片:" prop="picture">
-            <van-uploader :max-size= "size" :after-read="afterRead" :max-count="1" :before-read="beforeRead" v-model="fileList"/>
-         </el-form-item>
+        <el-form-item label="图片:" prop="picture">
+          <van-uploader
+            :max-size="size"
+            :after-read="afterRead"
+            :max-count="1"
+            :before-read="beforeRead"
+            v-model="fileList"
+          />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="controlCar">{{title}}</el-button>
         <el-button @click="toggleDialog">关闭</el-button>
       </div>
     </el-dialog>
-      <div class="van-toast van-toast--middle van-toast--loading" :style="{ display:isShowLoading}">
-        <div class="van-loading van-loading--spinner van-toast__loading">
-          <span class="van-loading__spinner van-loading__spinner--spinner">
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-          </span>
-        </div>
-        <div class="van-toast__text">
-          {{messsage}}
-        </div>
+    <div class="van-toast van-toast--middle van-toast--loading" :style="{ display:isShowLoading}">
+      <div class="van-loading van-loading--spinner van-toast__loading">
+        <span class="van-loading__spinner van-loading__spinner--spinner">
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+          <i></i>
+        </span>
       </div>
+      <div class="van-toast__text">{{messsage}}</div>
+    </div>
   </div>
 </template>
 <script>
 import FetchData from "@/axios/index";
 import { deep } from "@/assets/js/util";
-import variables  from "@/assets/css/variables.scss";
+import variables from "@/assets/css/variables.scss";
 
 export default {
-   
   data() {
     var validateTel = (rule, value, callback) => {
       let money = /^\d{11}$/;
@@ -123,20 +147,22 @@ export default {
       }
     };
     return {
-      size:2097162,//2M
+      size: 2097162, //2M
       show: false, // 用来显示弹出层
       minDate: new Date(),
       currentDate: new Date(),
       isVisible: false,
-      messsage:"",
-      isShowLoading:"none",
+      messsage: "",
+      isShowLoading: "none",
       title: "添加",
-      districtList:[],
-      carTypeList:[],
-      limitDaysList:[{
+      districtList: [],
+      carTypeList: [],
+      limitDaysList: [
+        {
           value: "一月",
           label: "一月"
-        }],
+        }
+      ],
       mediaList: [
         {
           value: "汽油",
@@ -147,7 +173,7 @@ export default {
           label: "柴油"
         }
       ],
-      fileList:[],
+      fileList: [],
       form: {
         district: "",
         carType: "",
@@ -155,22 +181,31 @@ export default {
         loadWeight: "",
         tel: "",
         media: "",
-        picture:"",
+        picture: "",
         id: "",
-        startTime:"",
-        limitDays:""
+        startTime: "",
+        limitDays: ""
       },
       rules: {
-        district: [{ required: true, message: "请输入区域", trigger: "change" }],
+        district: [
+          { required: true, message: "请输入区域", trigger: "change" }
+        ],
         carType: [{ required: true, message: "请输入车型", trigger: "change" }],
         carNo: [{ required: true, message: "请输入车牌号", trigger: "change" }],
-        loadWeight: [{ required: true, message: "请输入载重", trigger: "change" }],
-        tel: [{ required: true, message: "请输入联系电话", trigger: "change" },
-              {validator: validateTel, trigger: "change"}
+        loadWeight: [
+          { required: true, message: "请输入载重", trigger: "change" }
+        ],
+        tel: [
+          { required: true, message: "请输入联系电话", trigger: "change" },
+          { validator: validateTel, trigger: "change" }
         ],
         media: [{ required: true, message: "请选择介质", trigger: "change" }],
-        startTime: [{ required: true, message: "请选择开始时间", trigger: "change" }],
-        limitDays: [{ required: true, message: "请选择期限", trigger: "change" }]
+        startTime: [
+          { required: true, message: "请选择开始时间", trigger: "change" }
+        ],
+        limitDays: [
+          { required: true, message: "请选择期限", trigger: "change" }
+        ]
       },
       mergeSpanArr: [], // 空数组，记录每一行的合并数
       mergeSpanArrIndex: "", // mergeSpanArr的索引
@@ -183,53 +218,72 @@ export default {
     this.queryCar();
   },
   methods: {
-      showPopFn() {
-        this.show = true;
-      },
-      changeFn() { // 值变化是触发
-        this.changeDate = this.currentDate // Tue Sep 08 2020 00:00:00 GMT+0800 (中国标准时间)
-      },
-      confirmFn() { // 确定按钮
-        this.form.startTime = this.timeFormat(this.currentDate);
-        this.show = false;
-      },
-      cancelFn(){
-        this.show = false;
-      },
-      timeFormat(time) { // 时间格式化 2019-09-08
-        let year = time.getFullYear();
-        let month = time.getMonth() + 1;
-        let day = time.getDate();
-        var hours = time.getHours();
-        var minutes = time.getMinutes();
-        var seconds = time.getSeconds();
-        if (month >= 1 && month <= 9) {
-	        month = "0" + month;
-        }
-        if (day >= 0 && day <= 9) {
-            day = "0" + day;
-        }
+    showPopFn() {
+      this.show = true;
+    },
+    changeFn() {
+      // 值变化是触发
+      this.changeDate = this.currentDate; // Tue Sep 08 2020 00:00:00 GMT+0800 (中国标准时间)
+    },
+    confirmFn() {
+      // 确定按钮
+      this.form.startTime = this.timeFormat(this.currentDate);
+      this.show = false;
+    },
+    cancelFn() {
+      this.show = false;
+    },
+    timeFormat(time) {
+      // 时间格式化 2019-09-08
+      let year = time.getFullYear();
+      let month = time.getMonth() + 1;
+      let day = time.getDate();
+      var hours = time.getHours();
+      var minutes = time.getMinutes();
+      var seconds = time.getSeconds();
+      if (month >= 1 && month <= 9) {
+        month = "0" + month;
+      }
+      if (day >= 0 && day <= 9) {
+        day = "0" + day;
+      }
 
-        if (hours >= 1 && hours <= 9) {
-          hours = "0" + hours;
-        }
+      if (hours >= 1 && hours <= 9) {
+        hours = "0" + hours;
+      }
 
-        if (minutes >= 0 && minutes <= 9) {
-          minutes = "0" + minutes;
-        }
+      if (minutes >= 0 && minutes <= 9) {
+        minutes = "0" + minutes;
+      }
 
-        if (seconds >= 0 && seconds <= 9) {
-          seconds = "0" + seconds;
-        }
-        return year + '-' + month + '-' + day + ' '+ hours + ':' + minutes +':'+seconds;
-      },
+      if (seconds >= 0 && seconds <= 9) {
+        seconds = "0" + seconds;
+      }
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day +
+        " " +
+        hours +
+        ":" +
+        minutes +
+        ":" +
+        seconds
+      );
+    },
     beforeRead(file) {
-      console.log(file)
-      if (file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/jpg') {
+      console.log(file);
+      if (
+        file.type !== "image/jpeg" &&
+        file.type !== "image/png" &&
+        file.type !== "image/jpg"
+      ) {
         this.$message.error("请上传jpeg、png、jpg图片");
         return false;
       }
-      if(file.size > this.size) {
+      if (file.size > this.size) {
         this.$message.error("图片大小不能超过2M");
         return false;
       }
@@ -237,22 +291,26 @@ export default {
     },
     afterRead(file) {
       // 此时可以自行将文件上传至服务器
-      this.uploadImg(file)
+      this.uploadImg(file);
     },
-   
-    uploadImg(file){
-         this.messsage = "上传图片中";
-         this.isShowLoading = "block";
-         FetchData.requestPost(`upload`, {file: file.content,fileName:Date.now()+"-"+file.file.name}, "post").then(data => {
-            data = data.data;
-            if (data.code == "200") {
-              console.log(data.url);
-                this.form.picture = data.url;
-               this.isShowLoading = "none";
-            } else {
-              this.$message.error("上传图片错误");
-            }
-        });
+
+    uploadImg(file) {
+      this.messsage = "上传图片中";
+      this.isShowLoading = "block";
+      FetchData.requestPost(
+        `upload`,
+        { file: file.content, fileName: Date.now() + "-" + file.file.name },
+        "post"
+      ).then(data => {
+        data = data.data;
+        if (data.code == "200") {
+          console.log(data.url);
+          this.form.picture = data.url;
+          this.isShowLoading = "none";
+        } else {
+          this.$message.error("上传图片错误");
+        }
+      });
     },
     queryCar() {
       FetchData.request("car/queryCar").then(data => {
@@ -282,12 +340,12 @@ export default {
       });
     },
     requestCar(url, title) {
-        this.messsage = "请求中";
-        this.isShowLoading = "block";
-        console.log(this.form)
+      this.messsage = "请求中";
+      this.isShowLoading = "block";
+      console.log(this.form);
       FetchData.requestPost(`car/${url}`, this.form, "post").then(data => {
         data = data.data;
-         this.isShowLoading = "none";
+        this.isShowLoading = "none";
         if (data.code == "200") {
           this.$message({
             message: `${title}数据成功`,
@@ -296,22 +354,22 @@ export default {
           this.queryCar();
           this.isVisible = false;
         } else {
-         this.$message.error("查询数据失败");
+          this.$message.error("查询数据失败");
         }
       });
     },
     openAddDialog() {
       this.isVisible = !this.isVisible;
       this.form = {
-         district: "",
+        district: "",
         carType: "",
         carNo: "",
         loadWeight: "",
         tel: "",
         media: "",
-        picture:"",
-        startTime:this.timeFormat(new Date()),
-        limitDays:"",
+        picture: "",
+        startTime: this.timeFormat(new Date()),
+        limitDays: "",
         id: ""
       };
       this.title = "添加";
@@ -323,12 +381,14 @@ export default {
       this.isVisible = !this.isVisible;
       let cloneRow = deep(row);
       this.title = "修改";
-      console.log(cloneRow)
+      console.log(cloneRow);
       this.$nextTick(() => {
         this.$refs["form"].resetFields();
-        this.form = Object.assign({},this.form,cloneRow);
+        this.form = Object.assign({}, this.form, cloneRow);
         this.fileList = [];
-        this.fileList.push({url:"http://192.144.184.96:80/"+this.form.picture});
+        this.fileList.push({
+          url: "http://192.144.184.96:80/" + this.form.picture
+        });
       });
     },
     toggleDialog() {
@@ -366,9 +426,9 @@ export default {
     changeCss({ row }) {
       // 定义changeCss函数，这样当表格中的相应行满足自己设定的条件是就可以将该行css样式改变
       if (this.oddDistrictArr.includes(row.district)) {
-        return "background:"+variables.trOddColor;
+        return "background:" + variables.trOddColor;
       } else if (this.evenDistrictArr.includes(row.district)) {
-        return "background:"+variables.trEvenColor;
+        return "background:" + variables.trEvenColor;
       }
     },
 
@@ -437,11 +497,12 @@ export default {
   .el-table th {
     display: table-cell !important;
   }
-  .el-date-editor.el-input, .el-date-editor.el-input__inner {
-    width:100%;
+  .el-date-editor.el-input,
+  .el-date-editor.el-input__inner {
+    width: 100%;
   }
   .el-icon-time:before {
-    content:"";
+    content: "";
   }
   .el-table colgroup {
     display: table-cell !important;
@@ -472,7 +533,7 @@ export default {
     text-align-last: justify;
   }
   .el-form-item__content {
-    flex:1;
+    flex: 1;
   }
   .el-select {
     width: 100%;
@@ -492,6 +553,5 @@ export default {
   .wper100 {
     width: 100% !important;
   }
- 
 }
 </style>
