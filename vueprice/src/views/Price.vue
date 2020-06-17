@@ -54,8 +54,8 @@
     
     <div class="p15">
       <span class="mt15 pho"> 咨询电话:</span>
-        <a href="tel:15826146489" class="phone">15826146489(吕)、</a>
-        <a href="tel:17823608628" class="phone">17823608628(胡)</a>
+        <a href="tel:13637837855" class="phone" style="font-size:16px">13637837855(胡)、</a>
+        <a href="tel:15826146489" class="phone">15826146489(吕)</a>
         <div class="between">
            <el-button type="primary" class="mt15" @click="sortByEndPriceOnBtn">按单位价{{orderTitle}}序排列</el-button>
            <el-button type="primary" class="mt15" @click="toggleDialog">自定义计算</el-button>
